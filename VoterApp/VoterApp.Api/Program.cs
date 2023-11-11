@@ -1,3 +1,6 @@
+using VoterApp.Api;
+using VoterApp.Api.Middleware;
+using VoterApp.Application;
 using VoterApp.Infrastructure;
 using VoterApp.Infrastructure.PsqlDb;
 
@@ -6,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices();
+builder.Services.AddApiServices();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -21,8 +26,12 @@ if (app.Environment.IsDevelopment())
 }
 
 using var scope = app.Services.CreateScope();
-var context = scope.ServiceProvider.GetRequiredService<PsqlDbContext>();
+var context = scope.ServiceProvider.GetRequiredService<IPsqlDbContext>();
 await context.Init();
+
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 

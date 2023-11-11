@@ -1,11 +1,11 @@
 ﻿using VoterApp.Application.Contracts;
 using VoterApp.Domain.Entities;
 
-namespace VoterApp.Infrastructure.Respositories;
+namespace VoterApp.Infrastructure.PsqlDb.Repositories;
 
-public class CandidateRepository : ICandidateRepository
+public class VoterRepository : IVoterRepository
 {
-    public Task<Candidate?> Get(int id)
+    public Task<Voter?> Get(int id)
     {
         throw new NotImplementedException();
     }
@@ -15,12 +15,12 @@ public class CandidateRepository : ICandidateRepository
         throw new NotImplementedException();
     }
 
-    // public Task<int> Create(CreateCandidateCommand createCommand)
+    // public Task<int> Create(CreateVoterCommand createCommand)
     // {
     //     throw new NotImplementedException();
     // }
-
-    // public Task Update(UpdateCandidateCommand updateCommand)
+    //
+    // public Task Update(UpdateVoterCommand updateCommand)
     // {
     //     throw new NotImplementedException();
     // }

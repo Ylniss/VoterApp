@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VoterApp.Application.Contracts;
 using VoterApp.Infrastructure.Parsers;
 using VoterApp.Infrastructure.PsqlDb;
-using VoterApp.Infrastructure.Respositories;
+using VoterApp.Infrastructure.PsqlDb.Repositories;
 
 namespace VoterApp.Infrastructure;
 
