@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\VoterApp.Domain\VoterApp.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\" />
+      <Folder Include="Features\Candidates\Commands\CreateCandidate\" />
+      <Folder Include="Features\Candidates\Commands\DeleteCandidate\" />
+      <Folder Include="Features\Candidates\Commands\UpdateCandidateName\" />
+      <Folder Include="Features\Candidates\Dtos\" />
+      <Folder Include="Features\Candidates\Mappings\" />
+      <Folder Include="Features\Candidates\Queries\GetAllCandidates\" />
+      <Folder Include="Features\Candidates\Queries\GetCandidate\" />
+      <Folder Include="Features\Voters\Commands\CreateVoter\" />
+      <Folder Include="Features\Voters\Commands\DeleteVoter\" />
+      <Folder Include="Features\Voters\Commands\UpdateVoterName\" />
+      <Folder Include="Features\Voters\Commands\Vote\" />
+      <Folder Include="Features\Voters\Dtos\" />
+      <Folder Include="Features\Voters\Mappings\" />
+      <Folder Include="Features\Voters\Queries\GetAllVoters\" />
+      <Folder Include="Features\Voters\Queries\GetVoter\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="12.0.1" />
+      <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+      <PackageReference Include="FluentValidation" Version="11.8.0" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0" />
+      <PackageReference Include="MediatR" Version="12.1.1" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+    </ItemGroup>
+
+</Project>
