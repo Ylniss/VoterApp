@@ -2,13 +2,13 @@
 using VoterApp.Application.Common.Constants;
 using VoterApp.Application.Contracts;
 
-namespace VoterApp.Application.Features.Candidates.Commands.UpdateCandidateName;
+namespace VoterApp.Application.Features.Candidates.Commands.UpdateCandidate;
 
-public class UpdateCandidateCommandNameValidator : AbstractValidator<UpdateCandidateNameCommand>
+public class UpdateCandidateCommandValidator : AbstractValidator<UpdateCandidateCommand>
 {
     private readonly ICandidateRepository _candidateRepository;
 
-    public UpdateCandidateCommandNameValidator(ICandidateRepository candidateRepository)
+    public UpdateCandidateCommandValidator(ICandidateRepository candidateRepository)
     {
         _candidateRepository = candidateRepository;
 
@@ -21,6 +21,6 @@ public class UpdateCandidateCommandNameValidator : AbstractValidator<UpdateCandi
     private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
     {
         var candidates = await _candidateRepository.GetAll();
-        return candidates.Any(x => x.Name == name);
+        return candidates.All(x => x.Name != name);
     }
 }

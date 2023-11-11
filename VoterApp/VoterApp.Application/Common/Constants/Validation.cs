@@ -3,6 +3,7 @@
 public static class Validation
 {
     public const int MaxNameLength = 25;
+    public const int MinNameLength = 3;
 
     public static class Messages
     {
@@ -11,5 +12,8 @@ public static class Validation
 
         public static readonly string MaxLength =
             "{PropertyName}" + $" must be less or equal {MaxNameLength} characters.";
+
+        public static readonly string MinLength =
+            "{PropertyName}" + $" must be at least {MinNameLength} characters.";
     }
 }

@@ -1,0 +1,38 @@
+﻿networks:
+  dev:
+    driver: bridge
+
+services:
+  voterapp.api:
+    image: voterapp.api
+    depends_on:
+      - "voterapp-db"
+    container_name: voterapp-api
+    ports:
+      - "7001:80"
+    build:
+      context: .
+      dockerfile: VoterApp.Api/Dockerfile
+    environment:
+      - ConnectionString=Server=voterapp-db;Port=5432;Database=voterAppDb;User Id=myUsername;Password=myPassword;
+      - ASPNETCORE_URLS=http://+:80
+    networks:
+      - dev
+  
+  voterapp-db:
+    image: postgres:latest
+    container_name: voterapp-db
+    environment:
+      - POSTGRES_USER=myUsername
+      - POSTGRES_PASSWORD=myPassword
+      - POSTGRES_DB=voterAppDb
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - app_data:/var/lib/postgresql/data
+    networks:
+      - dev
+
+volumes:
+  app_data:

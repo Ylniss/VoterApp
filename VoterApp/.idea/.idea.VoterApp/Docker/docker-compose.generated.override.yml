@@ -1,0 +1,30 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  voterapp.api:
+    build:
+      context: "C:\\Users\\zupqa\\Stuff\\Repo\\VoterApp\\VoterApp"
+      dockerfile: "VoterApp.Api/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "/riderDebugger/linux-x64/dotnet/dotnet"
+    - "/riderDebugger/JetBrains.Debugger.Worker.exe"
+    - "--mode=server"
+    - "--frontend-port=57100"
+    - "--backend-port=57300"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      RIDER_DEBUGGER_LOG_DIR: "/riderLogs"
+      RESHARPER_LOG_CONF: "/riderLogsConf/backend-log.xml"
+    image: "voterapp.api:dev"
+    ports:
+    - "57024:57100"
+    - "57224:57300"
+    volumes:
+    - "C:\\Users\\zupqa\\Stuff\\Repo\\VoterApp\\VoterApp\\VoterApp.Api:/app:rw"
+    - "C:\\Users\\zupqa\\AppData\\Local\\JetBrains\\RiderRemoteDebugger\\2023.1.2\\\
+      Linux64:/riderDebugger"
+    - "C:\\Program Files\\JetBrains\\JetBrains Rider 2022.3.2/bin:/riderLogsConf"
+    - "C:\\Users\\zupqa\\AppData\\Local\\JetBrains\\Rider2023.1\\log\\DebuggerWorker\\\
+      JetBrains.Debugger.Worker.2023_11_12_00_08_17:/riderLogs:rw"
+    working_dir: "/app"

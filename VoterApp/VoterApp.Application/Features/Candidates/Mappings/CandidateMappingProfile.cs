@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using VoterApp.Application.Features.Candidates.Commands.CreateCandidate;
-using VoterApp.Application.Features.Candidates.Commands.UpdateCandidateName;
+using VoterApp.Application.Features.Candidates.Commands.UpdateCandidate;
 using VoterApp.Application.Features.Candidates.Dtos;
 using VoterApp.Domain.Entities;
 
@@ -13,6 +13,6 @@ public class CandidateMappingProfile : Profile
         CreateMap<CandidateDto, Candidate>().ReverseMap();
 
         CreateMap<CreateCandidateDto, CreateCandidateCommand>().ReverseMap();
-        CreateMap<UpdateCandidateNameDto, UpdateCandidateNameCommand>().ReverseMap();
+        CreateMap<UpdateCandidateDto, UpdateCandidateCommand>().ReverseMap();
     }
 }

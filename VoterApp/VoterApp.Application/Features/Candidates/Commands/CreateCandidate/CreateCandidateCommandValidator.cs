@@ -14,6 +14,7 @@ public class CreateCandidateCommandValidator : AbstractValidator<CreateCandidate
 
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage(Validation.Messages.IsRequired)
+            .MinimumLength(Validation.MinNameLength).WithMessage(Validation.Messages.MinLength)
             .MaximumLength(Validation.MaxNameLength).WithMessage(Validation.Messages.MaxLength)
             .MustAsync(BeUniqueName).WithMessage(Validation.Messages.MustBeUnique);
     }
@@ -21,6 +22,6 @@ public class CreateCandidateCommandValidator : AbstractValidator<CreateCandidate
     private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
     {
         var candidates = await _candidateRepository.GetAll();
-        return candidates.Any(x => x.Name == name);
+        return candidates.All(x => x.Name != name);
     }
 }

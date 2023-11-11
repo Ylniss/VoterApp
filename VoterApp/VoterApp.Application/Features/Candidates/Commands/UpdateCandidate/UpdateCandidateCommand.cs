@@ -3,11 +3,11 @@ using VoterApp.Application.Common.Exceptions;
 using VoterApp.Application.Common.Responses;
 using VoterApp.Application.Contracts;
 
-namespace VoterApp.Application.Features.Candidates.Commands.UpdateCandidateName;
+namespace VoterApp.Application.Features.Candidates.Commands.UpdateCandidate;
 
-public record UpdateCandidateNameCommand(int Id, string Name) : IRequest<CommandResponse>;
+public record UpdateCandidateCommand(int Id, string Name) : IRequest<CommandResponse>;
 
-public class UpdateCandidateCommandHandler : IRequestHandler<UpdateCandidateNameCommand, CommandResponse>
+public class UpdateCandidateCommandHandler : IRequestHandler<UpdateCandidateCommand, CommandResponse>
 {
     private readonly ICandidateRepository _candidateRepository;
 
@@ -16,7 +16,7 @@ public class UpdateCandidateCommandHandler : IRequestHandler<UpdateCandidateName
         _candidateRepository = candidateRepository;
     }
 
-    public async Task<CommandResponse> Handle(UpdateCandidateNameCommand request, CancellationToken cancellationToken)
+    public async Task<CommandResponse> Handle(UpdateCandidateCommand request, CancellationToken cancellationToken)
     {
         var candidate = await _candidateRepository.Get(request.Id);
 

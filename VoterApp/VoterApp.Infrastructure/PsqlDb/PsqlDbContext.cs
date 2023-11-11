@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using Dapper;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using VoterApp.Infrastructure.Parsers;
 
@@ -10,10 +10,12 @@ public class PsqlDbContext : IPsqlDbContext
 {
     private readonly string? _connectionString;
     private readonly string _dbName;
+    private readonly ILogger<PsqlDbContext> _logger;
 
-    public PsqlDbContext(IConfiguration config, IConnectionStringParser connectionStringParser)
+    public PsqlDbContext(IConnectionStringParser connectionStringParser, ILogger<PsqlDbContext> logger)
     {
-        _connectionString = config.GetConnectionString("PsqlConnection");
+        _logger = logger;
+        _connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         _dbName = connectionStringParser.GetValue("Database", _connectionString);
     }
 
@@ -30,13 +32,23 @@ public class PsqlDbContext : IPsqlDbContext
 
     private async Task CreateDatabaseIfDoesntExist()
     {
-        using var connection = CreateConnection();
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString)
+        {
+            // before we can use our database, first we have to create it using default postgres db
+            Database = "postgres"
+        };
+
+        await using var connection = new NpgsqlConnection(builder.ToString());
+
         var sqlDbCount = $@"SELECT COUNT(*) FROM pg_database WHERE datname = '{_dbName}';";
         var dbCount = await connection.ExecuteScalarAsync<int>(sqlDbCount);
+
         if (dbCount == 0)
         {
+            _logger.LogInformation("Creating database...");
             var sql = $"""CREATE DATABASE "{_dbName}" """;
             await connection.ExecuteAsync(sql);
+            _logger.LogInformation($"Database {_dbName} created.");
         }
     }
 

@@ -5,7 +5,7 @@ using VoterApp.Api.ErrorResponses;
 using VoterApp.Application.Common.Responses;
 using VoterApp.Application.Features.Candidates.Commands.CreateCandidate;
 using VoterApp.Application.Features.Candidates.Commands.DeleteCandidate;
-using VoterApp.Application.Features.Candidates.Commands.UpdateCandidateName;
+using VoterApp.Application.Features.Candidates.Commands.UpdateCandidate;
 using VoterApp.Application.Features.Candidates.Dtos;
 using VoterApp.Application.Features.Candidates.Queries.GetAllCandidates;
 using VoterApp.Application.Features.Candidates.Queries.GetCandidate;
@@ -59,9 +59,9 @@ public class CandidatesController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiValidationErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<CommandResponse>> Update(int id, [FromBody] UpdateCandidateNameDto candidate)
+    public async Task<ActionResult<CommandResponse>> Update(int id, [FromBody] UpdateCandidateDto candidate)
     {
-        var command = _mapper.Map<UpdateCandidateNameCommand>(candidate);
+        var command = _mapper.Map<UpdateCandidateCommand>(candidate);
         command = command with { Id = id };
         var result = await _mediator.Send(command);
         return Ok(result);

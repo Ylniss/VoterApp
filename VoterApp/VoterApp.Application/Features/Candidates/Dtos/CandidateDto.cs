@@ -4,4 +4,4 @@ public record CandidateDto(int Id, string Name);
 
 public record CreateCandidateDto(string Name);
 
-public record UpdateCandidateNameDto(string Name);
+public record UpdateCandidateDto(string Name);
