@@ -5,22 +5,26 @@ namespace VoterApp.Domain.Entities;
 
 public class Voter : BaseEntity
 {
-    public Voter(string name)
+    public Voter(string name, Election election)
     {
         Name = name;
-        KeyPhrase = new KeyPhrase();
+        Election = election;
+        KeyPhrase = new KeyPhrase().Key;
     }
 
     private Voter()
     {
     }
 
-    public string Name { get; init; }
+    public string Name { get; set; }
 
-    public Candidate? VotedCandidate { get; private set; }
+    public Candidate? VotedCandidate { get; set; }
+
+    public Election Election { get; set; }
+
+    public string KeyPhrase { get; set; }
 
     public bool HasVoted => VotedCandidate is not null;
-    public KeyPhrase KeyPhrase { get; }
 
     public void Vote(Candidate candidate)
     {

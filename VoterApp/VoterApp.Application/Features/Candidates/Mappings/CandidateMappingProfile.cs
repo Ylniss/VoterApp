@@ -15,6 +15,7 @@ public class CandidateMappingProfile : Profile
             .ConstructUsing(candidate => new CandidateDto(
                 candidate.Id,
                 candidate.Name,
+                candidate.Election.Id,
                 candidate.Voters.Count
             ));
 

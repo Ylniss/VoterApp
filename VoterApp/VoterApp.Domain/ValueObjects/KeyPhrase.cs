@@ -14,5 +14,5 @@ public record KeyPhrase
         Key = Convert.ToBase64String(bytes);
     }
 
-    public string Key { get; }
+    public string Key { get; set; }
 }

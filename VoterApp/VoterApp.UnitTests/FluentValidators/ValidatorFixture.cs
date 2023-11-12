@@ -9,12 +9,12 @@ public class ValidatorFixture
 {
     public ValidatorFixture()
     {
-        ValidCreateCandidateCommand = new CreateCandidateCommand("Valid Name");
+        ValidCreateCandidateCommand = new CreateCandidateCommand("Valid Name", 1);
 
         MockCandidateRepo = new Mock<ICandidateRepository>();
 
         MockCandidateRepo.Setup(r => r.GetAll())
-            .ReturnsAsync(() => new List<Candidate> { new("Same Name") });
+            .ReturnsAsync(() => new List<Candidate> { new("Same Name", new Election("topic")) });
     }
 
     public Mock<ICandidateRepository> MockCandidateRepo { get; }

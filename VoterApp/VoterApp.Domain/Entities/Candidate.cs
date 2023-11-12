@@ -4,14 +4,18 @@ namespace VoterApp.Domain.Entities;
 
 public class Candidate : BaseEntity
 {
-    public Candidate(string name) => Name = name;
+    public Candidate(string name, Election election)
+    {
+        Name = name;
+        Election = election;
+    }
 
     private Candidate()
     {
     }
 
-    public string Name { get; init; }
+    public string Name { get; set; }
     public List<Voter> Voters { get; } = new();
 
-    public int GetNumberOfVotes() => Voters.Count;
+    public Election Election { get; set; }
 }

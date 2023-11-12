@@ -11,12 +11,12 @@ public class AutoMapperFixture
         Configuration = MapperProvider.CreateConfig();
         Mapper = Configuration.CreateMapper();
 
-        ValidCandidate = new Candidate("Jack")
+        ValidCandidate = new Candidate("Jack", new Election("topic") { Id = 1 })
         {
             Id = 1
         };
 
-        ValidCandidateDto = new CandidateDto(1, "Jack", 0);
+        ValidCandidateDto = new CandidateDto(1, "Jack", 1, 0);
     }
 
     public MapperConfiguration Configuration { get; }

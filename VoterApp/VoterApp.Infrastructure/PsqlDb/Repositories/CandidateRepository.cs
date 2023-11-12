@@ -20,13 +20,42 @@ public class CandidateRepository : ICandidateRepository
 
     public async Task<Candidate?> Get(int id)
     {
-        var sql = "SELECT id, name FROM candidates WHERE id = @Id;";
+        var sql = @"
+                    SELECT c.*, e.*, v.*
+                    FROM Candidates c
+                    JOIN Elections e ON c.ElectionId = e.Id
+                    JOIN Voters v ON c.Id = v.VotedCandidateId
+                    WHERE c.Id = @Id;
+                    ";
 
         using var connection = _psqlDbContext.CreateConnection();
 
+        var candidateDictionary = new Dictionary<int, Candidate>();
+
         try
         {
-            return await connection.QueryFirstAsync<Candidate>(sql, new { id });
+            var candidates = connection.Query<Candidate, Election, Voter, Candidate>(
+                sql,
+                (candidate, election, voter) =>
+                {
+                    if (!candidateDictionary.TryGetValue(candidate.Id, out var candidateEntry))
+                    {
+                        candidateEntry = candidate;
+                        candidateEntry.Election = election;
+                        election.Candidates.Add(candidateEntry);
+                        candidateDictionary.Add(candidateEntry.Id, candidateEntry);
+                    }
+
+                    candidateEntry.Voters.Add(voter);
+                    voter.VotedCandidate = candidate;
+
+                    return candidateEntry;
+                },
+                new { id },
+                splitOn: "Id,Id"
+            ).Distinct().ToList();
+
+            return candidates.FirstOrDefault();
         }
         catch (InvalidOperationException ex) when (ex.Message is "Sequence contains no elements")
         {
@@ -45,7 +74,7 @@ public class CandidateRepository : ICandidateRepository
 
     public async Task<int> Create(CreateCandidateCommand createCommand)
     {
-        var sql = @"INSERT INTO candidates(name) VALUES (@Name) RETURNING Id";
+        var sql = @"INSERT INTO candidates(name, electionid) VALUES (@Name, @ElectionId) RETURNING Id";
 
         using var connection = _psqlDbContext.CreateConnection();
 
