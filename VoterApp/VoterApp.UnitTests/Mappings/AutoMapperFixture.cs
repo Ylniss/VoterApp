@@ -16,7 +16,7 @@ public class AutoMapperFixture
             Id = 1
         };
 
-        ValidCandidateDto = new CandidateDto(1, "Jack");
+        ValidCandidateDto = new CandidateDto(1, "Jack", 0);
     }
 
     public MapperConfiguration Configuration { get; }

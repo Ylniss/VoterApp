@@ -10,9 +10,16 @@ public class CandidateMappingProfile : Profile
 {
     public CandidateMappingProfile()
     {
-        CreateMap<CandidateDto, Candidate>().ReverseMap();
+        CreateMap<Candidate, CandidateDto>()
+            .ForMember(dest => dest.Votes, opt => opt.MapFrom(src => src.Voters.Count))
+            .ConstructUsing(candidate => new CandidateDto(
+                candidate.Id,
+                candidate.Name,
+                candidate.Voters.Count
+            ));
 
-        CreateMap<CreateCandidateDto, CreateCandidateCommand>().ReverseMap();
-        CreateMap<UpdateCandidateDto, UpdateCandidateCommand>().ReverseMap();
+        CreateMap<CreateCandidateDto, CreateCandidateCommand>();
+        CreateMap<UpdateCandidateDto, UpdateCandidateCommand>()
+            .ForMember(x => x.Id, opt => opt.Ignore());
     }
 }

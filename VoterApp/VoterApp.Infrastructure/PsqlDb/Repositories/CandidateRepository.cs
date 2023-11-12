@@ -3,7 +3,6 @@ using Dapper;
 using VoterApp.Application.Contracts;
 using VoterApp.Application.Features.Candidates.Commands.CreateCandidate;
 using VoterApp.Application.Features.Candidates.Commands.UpdateCandidate;
-using VoterApp.Application.Features.Candidates.Dtos;
 using VoterApp.Domain.Entities;
 
 namespace VoterApp.Infrastructure.PsqlDb.Repositories;
@@ -27,8 +26,7 @@ public class CandidateRepository : ICandidateRepository
 
         try
         {
-            var candidate = await connection.QueryFirstAsync<CandidateDto>(sql, new { id });
-            return _mapper.Map<Candidate>(candidate);
+            return await connection.QueryFirstAsync<Candidate>(sql, new { id });
         }
         catch (InvalidOperationException ex) when (ex.Message is "Sequence contains no elements")
         {
@@ -42,9 +40,7 @@ public class CandidateRepository : ICandidateRepository
 
         using var connection = _psqlDbContext.CreateConnection();
 
-        var candidates = await connection.QueryAsync<CandidateDto>(sql);
-
-        return _mapper.Map<IEnumerable<Candidate>>(candidates);
+        return await connection.QueryAsync<Candidate>(sql);
     }
 
     public async Task<int> Create(CreateCandidateCommand createCommand)

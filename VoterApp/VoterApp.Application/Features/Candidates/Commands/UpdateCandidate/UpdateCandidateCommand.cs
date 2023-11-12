@@ -5,16 +5,18 @@ using VoterApp.Application.Contracts;
 
 namespace VoterApp.Application.Features.Candidates.Commands.UpdateCandidate;
 
-public record UpdateCandidateCommand(int Id, string Name) : IRequest<CommandResponse>;
+public record UpdateCandidateCommand : IRequest<CommandResponse>
+{
+    public int Id { get; init; }
+    public string Name { get; init; }
+}
 
 public class UpdateCandidateCommandHandler : IRequestHandler<UpdateCandidateCommand, CommandResponse>
 {
     private readonly ICandidateRepository _candidateRepository;
 
-    public UpdateCandidateCommandHandler(ICandidateRepository candidateRepository)
-    {
+    public UpdateCandidateCommandHandler(ICandidateRepository candidateRepository) =>
         _candidateRepository = candidateRepository;
-    }
 
     public async Task<CommandResponse> Handle(UpdateCandidateCommand request, CancellationToken cancellationToken)
     {

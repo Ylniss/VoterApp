@@ -18,6 +18,7 @@ public class UpdateCandidateCommandHandlerTests : IClassFixture<FeatureFixture>
 
         // Act Assert
         Should.Throw<NotFoundException>(async () =>
-            await handler.Handle(new UpdateCandidateCommand(999999, "Bob"), CancellationToken.None));
+            await handler.Handle(new UpdateCandidateCommand { Id = 999999, Name = "Bob" }, CancellationToken.None)
+        );
     }
 }

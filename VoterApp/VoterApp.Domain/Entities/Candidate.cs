@@ -6,6 +6,10 @@ public class Candidate : BaseEntity
 {
     public Candidate(string name) => Name = name;
 
+    private Candidate()
+    {
+    }
+
     public string Name { get; init; }
     public List<Voter> Voters { get; } = new();
 

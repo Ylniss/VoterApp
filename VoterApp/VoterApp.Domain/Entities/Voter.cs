@@ -11,6 +11,10 @@ public class Voter : BaseEntity
         KeyPhrase = new KeyPhrase();
     }
 
+    private Voter()
+    {
+    }
+
     public string Name { get; init; }
 
     public Candidate? VotedCandidate { get; private set; }
