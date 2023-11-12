@@ -16,6 +16,8 @@ services:
     environment:
       - ConnectionString=Server=voterapp-db;Port=5432;Database=voterAppDb;User Id=myUsername;Password=myPassword;
       - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - ./logs:/app/logs
     networks:
       - dev
   

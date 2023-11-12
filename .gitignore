@@ -475,3 +475,4 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+VoterApp/.idea/.idea.VoterApp/Docker/docker-compose.generated.override.yml
