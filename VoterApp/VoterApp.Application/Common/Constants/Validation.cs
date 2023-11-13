@@ -14,6 +14,13 @@ public static class Validation
         public const string MustBeUniqueInElection = "'{PropertyName}' must be unique in election.";
         public const string MustExistElection = "'{PropertyName}' must have corresponding existing Election.";
 
+        public const string MustExistAndBeInSameElectionAsCandidate =
+            "Voter and candidate must exist and be in the same election.";
+
+        public const string MustHaveNoVote = "Voter has already voted.";
+
+        public const string MustHaveCorrectKeyPhrase = "KeyPhrase must be equal to voters KeyPhrase.";
+
         public static readonly string MaxNameLength =
             "{PropertyName}" + $" must be less or equal {Validation.MaxNameLength} characters.";
 

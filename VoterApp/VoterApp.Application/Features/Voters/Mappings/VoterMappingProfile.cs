@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using VoterApp.Application.Features.Voters.Commands.CreateVoter;
+using VoterApp.Application.Features.Voters.Commands.UpdateVoterName;
+using VoterApp.Application.Features.Voters.Commands.Vote;
 using VoterApp.Application.Features.Voters.Dtos;
 using VoterApp.Domain.Entities;
 
@@ -17,8 +20,15 @@ public class VoterMappingProfile : Profile
                 voter.HasVoted
             ));
 
-        // CreateMap<CreateVoterDto, CreateVoterCommand>();
-        // CreateMap<UpdateVoterDto, UpdateVoterCommand>()
-        //     .ForMember(x => x.Id, opt => opt.Ignore());
+        CreateMap<Voter, UpdateVoterCommand>()
+            .ForMember(dest => dest.VotedCandidateId, opt => opt.MapFrom(src => src.VotedCandidate.Id))
+            .ForMember(dest => dest.ElectionId, opt => opt.MapFrom(src => src.Election.Id));
+
+        CreateMap<VoteDto, VoteCommand>();
+
+        CreateMap<CreateVoterDto, CreateVoterCommand>();
+        CreateMap<UpdateVoterDto, UpdateVoterCommand>()
+            .ForMember(x => x.Id, opt => opt.Ignore())
+            .ForMember(x => x.ElectionId, opt => opt.Ignore());
     }
 }

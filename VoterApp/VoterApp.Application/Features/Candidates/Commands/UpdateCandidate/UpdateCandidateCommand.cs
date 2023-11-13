@@ -9,7 +9,6 @@ public record UpdateCandidateCommand : IRequest<CommandResponse>
 {
     public int Id { get; init; }
     public string Name { get; init; }
-
     public int ElectionId { get; init; }
 }
 

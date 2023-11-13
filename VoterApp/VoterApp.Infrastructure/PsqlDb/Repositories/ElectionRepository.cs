@@ -10,11 +10,14 @@ public class ElectionRepository : IElectionRepository
 {
     private readonly ICandidateRepository _candidateRepository;
     private readonly IPsqlDbContext _psqlDbContext;
+    private readonly IVoterRepository _voterRepository;
 
-    public ElectionRepository(IPsqlDbContext psqlDbContext, ICandidateRepository candidateRepository)
+    public ElectionRepository(IPsqlDbContext psqlDbContext, ICandidateRepository candidateRepository,
+        IVoterRepository voterRepository)
     {
         _psqlDbContext = psqlDbContext;
         _candidateRepository = candidateRepository;
+        _voterRepository = voterRepository;
     }
 
     public async Task<Election?> Get(int id, IDbTransaction? transaction = null)
@@ -58,7 +61,10 @@ public class ElectionRepository : IElectionRepository
 
             var election = elections.FirstOrDefault();
 
-            if (election != null) election.Candidates = (await _candidateRepository.GetAll(id)).ToList();
+            if (election == null) return election;
+
+            election.Candidates = (await _candidateRepository.GetAll(id)).ToList();
+            election.Voters = (await _voterRepository.GetAll(id)).ToList();
 
             return election;
         }

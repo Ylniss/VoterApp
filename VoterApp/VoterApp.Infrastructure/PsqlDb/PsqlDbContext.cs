@@ -126,7 +126,10 @@ public class PsqlDbContext : IPsqlDbContext
                         VALUES 
                             ('Chillman', 1, 1, '123'),
                             ('Lilchan',1, 1, '321'),
-                            ('Nalchil',1, 3, '111');"
+                            ('Nalchil',1, 3, '111'),
+                            ('Chinchin',2, null, '997'),
+                            ('Inchin',2, null, 'sikret'),
+                            ('BruhMan',2, null, 'elo');"
         };
         await ExecuteQueriesInTransaction(connection, transaction, queries);
     }

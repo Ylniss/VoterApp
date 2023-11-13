@@ -4,4 +4,4 @@ public record VoterDto(int Id, string Name, int ElectionId, string KeyPhrase, bo
 
 public record CreateVoterDto(string Name, int ElectionId);
 
-public record UpdateVoterDto(string Name, int ElectionId);
+public record UpdateVoterDto(string Name);

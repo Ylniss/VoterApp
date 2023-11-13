@@ -11,15 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Features\Voters\Commands\CreateVoter\"/>
-        <Folder Include="Features\Voters\Commands\DeleteVoter\"/>
-        <Folder Include="Features\Voters\Commands\UpdateVoterName\"/>
-        <Folder Include="Features\Voters\Commands\Vote\"/>
-        <Folder Include="Features\Voters\Queries\GetAllVoters\"/>
-        <Folder Include="Features\Voters\Queries\GetVoter\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="AutoMapper" Version="12.0.1"/>
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1"/>
         <PackageReference Include="FluentValidation" Version="11.8.0"/>

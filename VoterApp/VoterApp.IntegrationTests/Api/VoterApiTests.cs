@@ -3,41 +3,41 @@ using System.Net.Http.Json;
 using Shouldly;
 using VoterApp.Api.ErrorResponses;
 using VoterApp.Application.Common.Responses;
-using VoterApp.Application.Features.Candidates.Dtos;
+using VoterApp.Application.Features.Voters.Dtos;
 
 namespace VoterApp.IntegrationTests.Api;
 
 [Collection(nameof(DatabaseCollection))]
-public class CandidateApiTests :
+public class VoterApiTests :
     IClassFixture<ApiWebApplicationFactory>
 {
-    private const string ApiCandidates = "api/candidates";
+    private const string ApiVoters = "api/voters";
     private readonly HttpClient _client;
 
-    public CandidateApiTests(
+    public VoterApiTests(
         ApiWebApplicationFactory factory) =>
         _client = factory.CreateClient();
 
     [Fact]
-    public async Task Get_Id1ThatExists_ShouldReturnStatusCode200WithObjectThatHasNameBogdan()
+    public async Task Get_Id1ThatExists_ShouldReturnStatusCode200WithObjectThatHasNameChillman()
     {
         // Arrange
-        var request = $"{ApiCandidates}/1";
+        var request = $"{ApiVoters}/1";
 
         // Act
         var response = await _client.GetAsync(request);
-        var candidateDto = await response.Content.ReadAsAsync<CandidateDto>();
+        var voterDto = await response.Content.ReadAsAsync<VoterDto>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        candidateDto.Name.ShouldBe("Bogdan");
+        voterDto.Name.ShouldBe("Chillman");
     }
 
     [Fact]
     public async Task Get_IdThatDoesntExist_ShouldReturnStatusCode404()
     {
         // Arrange
-        var request = $"{ApiCandidates}/{int.MaxValue}";
+        var request = $"{ApiVoters}/{int.MaxValue}";
 
         // Act
         var response = await _client.GetAsync(request);
@@ -50,22 +50,22 @@ public class CandidateApiTests :
     public async Task GetAll_ShouldReturnMoreOrEqualTo4Objects()
     {
         // Arrange
-        var request = ApiCandidates;
+        var request = ApiVoters;
 
         // Act
         var response = await _client.GetAsync(request);
-        var candidates = await response.Content.ReadAsAsync<IEnumerable<CandidateDto>>();
+        var voters = await response.Content.ReadAsAsync<IEnumerable<VoterDto>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        candidates.Count().ShouldBeGreaterThanOrEqualTo(4);
+        voters.Count().ShouldBeGreaterThanOrEqualTo(4);
     }
 
     [Fact]
     public async Task Post_ValidObjectInBody_ShouldReturnStatusCode201()
     {
         // Arrange
-        var request = ApiCandidates;
+        var request = ApiVoters;
         var body = new
         {
             Name = "John",
@@ -78,14 +78,14 @@ public class CandidateApiTests :
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
-        insertedId.ShouldBe(5);
+        insertedId.ShouldBeGreaterThanOrEqualTo(7);
     }
 
     [Fact]
     public async Task Post_TooLongName_ShouldReturnStatusCode400With1ValidationError()
     {
         // Arrange
-        var request = ApiCandidates;
+        var request = ApiVoters;
         var body = new
         {
             Name = "Very loooooooooooooooooooooooooooooooooooooooooooooooooooooooooong name",
@@ -105,7 +105,7 @@ public class CandidateApiTests :
     public async Task Post_TooShortName_ShouldReturnStatusCode400With1ValidationError()
     {
         // Arrange
-        var request = ApiCandidates;
+        var request = ApiVoters;
         var body = new
         {
             Name = "a",
@@ -125,10 +125,10 @@ public class CandidateApiTests :
     public async Task Post_NameNotUniqueInElectionId1_ShouldReturnStatusCode400With1ValidationError()
     {
         // Arrange
-        var request = ApiCandidates;
+        var request = ApiVoters;
         var body = new
         {
-            Name = "Bogdan",
+            Name = "Chillman",
             ElectionId = 1
         };
 
@@ -142,13 +142,13 @@ public class CandidateApiTests :
     }
 
     [Fact]
-    public async Task Post_ElectionDoesntExistForCandidate_ShouldReturnStatusCode400With1ValidationError()
+    public async Task Post_ElectionDoesntExistForVoter_ShouldReturnStatusCode400With1ValidationError()
     {
         // Arrange
-        var request = ApiCandidates;
+        var request = ApiVoters;
         var body = new
         {
-            Name = "Ziomek",
+            Name = "Ziommm",
             ElectionId = int.MaxValue
         };
 
@@ -165,10 +165,10 @@ public class CandidateApiTests :
     public async Task Put_UpdateObjectId2_ShouldReturnStatusCode200()
     {
         // Arrange
-        var request = $"{ApiCandidates}/2";
+        var request = $"{ApiVoters}/2";
         var body = new
         {
-            Name = "CoolGobdan",
+            Name = "SuperLilchan",
             ElectionId = 1
         };
 
@@ -183,10 +183,10 @@ public class CandidateApiTests :
     public async Task Put_IdThatDoesntExist_ShouldReturnStatusCode404()
     {
         // Arrange
-        var request = $"{ApiCandidates}/{int.MaxValue}";
+        var request = $"{ApiVoters}/{int.MaxValue}";
         var body = new
         {
-            Name = "NewBogdan",
+            Name = "SuperChillman2000",
             ElectionId = 1
         };
 
@@ -201,7 +201,7 @@ public class CandidateApiTests :
     public async Task Delete_IdThatDoesntExist_ShouldReturnStatusCode404()
     {
         // Arrange
-        var request = $"{ApiCandidates}/{int.MaxValue}";
+        var request = $"{ApiVoters}/{int.MaxValue}";
 
         // Act
         var response = await _client.DeleteAsync(request);

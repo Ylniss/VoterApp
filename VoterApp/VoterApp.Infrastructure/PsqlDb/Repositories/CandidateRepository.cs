@@ -19,7 +19,7 @@ public class CandidateRepository : ICandidateRepository
                     SELECT c.*, e.*, v.*
                     FROM Candidates c
                     JOIN Elections e ON c.ElectionId = e.Id
-                    JOIN Voters v ON c.Id = v.VotedCandidateId
+                    LEFT JOIN Voters v ON c.Id = v.VotedCandidateId
                     WHERE c.Id = @Id;
                     ";
 
@@ -74,7 +74,7 @@ public class CandidateRepository : ICandidateRepository
                 FROM Candidates c
                 JOIN Elections e ON c.ElectionId = e.Id
                 LEFT JOIN Voters v ON c.Id = v.VotedCandidateId
-                WHERE e.Id = @ElectionId";
+                WHERE e.Id = @ElectionId;";
 
         using var connection = _psqlDbContext.CreateConnection();
 

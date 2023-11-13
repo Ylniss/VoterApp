@@ -7,6 +7,7 @@ using VoterApp.Application.Features.Elections.Dtos;
 
 namespace VoterApp.IntegrationTests.Api;
 
+[Collection(nameof(DatabaseCollection))]
 public class ElectionApiTests :
     IClassFixture<ApiWebApplicationFactory>
 {
