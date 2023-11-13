@@ -11,16 +11,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Features\Elections\Commands\"/>
-        <Folder Include="Features\Elections\Dtos\"/>
-        <Folder Include="Features\Elections\Mappings\"/>
-        <Folder Include="Features\Elections\Queries\"/>
         <Folder Include="Features\Voters\Commands\CreateVoter\"/>
         <Folder Include="Features\Voters\Commands\DeleteVoter\"/>
         <Folder Include="Features\Voters\Commands\UpdateVoterName\"/>
         <Folder Include="Features\Voters\Commands\Vote\"/>
-        <Folder Include="Features\Voters\Dtos\"/>
-        <Folder Include="Features\Voters\Mappings\"/>
         <Folder Include="Features\Voters\Queries\GetAllVoters\"/>
         <Folder Include="Features\Voters\Queries\GetVoter\"/>
     </ItemGroup>

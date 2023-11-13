@@ -14,9 +14,9 @@ public class UpdateCandidateCommandValidator : AbstractValidator<UpdateCandidate
 
         RuleFor(command => command.Name)
             .NotEmpty().WithMessage(Validation.Messages.IsRequired)
-            .MinimumLength(Validation.MinNameLength).WithMessage(Validation.Messages.MinLength)
-            .MaximumLength(Validation.MaxNameLength).WithMessage(Validation.Messages.MaxLength)
-            .MustAsync(BeUniqueNameInElection).WithMessage(Validation.Messages.MustBeUnique);
+            .MinimumLength(Validation.MinNameLength).WithMessage(Validation.Messages.MinNameLength)
+            .MaximumLength(Validation.MaxNameLength).WithMessage(Validation.Messages.MaxNameLength)
+            .MustAsync(BeUniqueNameInElection).WithMessage(Validation.Messages.MustBeUniqueInElection);
     }
 
     private async Task<bool> BeUniqueNameInElection(UpdateCandidateCommand command, string name,

@@ -61,8 +61,10 @@ public class CandidatesController : BaseApiController
     [ProducesResponseType(typeof(ApiValidationErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<CommandResponse>> Update(int id, [FromBody] UpdateCandidateDto candidate)
     {
+        var candidateElectionId = (await _mediator.Send(new GetCandidateQuery(id))).ElectionId;
+
         var command = _mapper.Map<UpdateCandidateCommand>(candidate);
-        command = command with { Id = id };
+        command = command with { Id = id, ElectionId = candidateElectionId };
         var result = await _mediator.Send(command);
         return Ok(result);
     }

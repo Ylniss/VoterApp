@@ -11,7 +11,7 @@ public class FeatureFixture
     {
         MockCandidateRepo = new Mock<ICandidateRepository>();
 
-        MockCandidateRepo.Setup(r => r.Get(It.IsAny<int>())).ReturnsAsync(() => null);
+        MockCandidateRepo.Setup(r => r.Get(It.IsAny<int>(), null)).ReturnsAsync(() => null);
 
         Mapper = MapperProvider.CreateMapper();
     }

@@ -15,6 +15,7 @@ public static class ConfigureServices
 
         services.AddScoped<IPsqlDbContext, PsqlDbContext>();
 
+        services.AddScoped<IElectionRepository, ElectionRepository>();
         services.AddScoped<IVoterRepository, VoterRepository>();
         services.AddScoped<ICandidateRepository, CandidateRepository>();
 

@@ -21,6 +21,7 @@ public class CandidateMappingProfile : Profile
 
         CreateMap<CreateCandidateDto, CreateCandidateCommand>();
         CreateMap<UpdateCandidateDto, UpdateCandidateCommand>()
-            .ForMember(x => x.Id, opt => opt.Ignore());
+            .ForMember(x => x.Id, opt => opt.Ignore())
+            .ForMember(x => x.ElectionId, opt => opt.Ignore());
     }
 }

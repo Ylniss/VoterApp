@@ -15,7 +15,10 @@ public class ApiWebApplicationFactory
 
     public async Task InitializeAsync() => await _postgreSqlContainer.StartAsync();
 
-    public async Task DisposeAsync() => await _postgreSqlContainer.DisposeAsync().AsTask();
+    public async Task DisposeAsync()
+    {
+        await _postgreSqlContainer.DisposeAsync();
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

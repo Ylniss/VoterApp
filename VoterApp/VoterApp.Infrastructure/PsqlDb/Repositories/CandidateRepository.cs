@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using System.Data;
 using Dapper;
 using VoterApp.Application.Contracts;
 using VoterApp.Application.Features.Candidates.Commands.CreateCandidate;
@@ -9,16 +9,11 @@ namespace VoterApp.Infrastructure.PsqlDb.Repositories;
 
 public class CandidateRepository : ICandidateRepository
 {
-    private readonly IMapper _mapper;
     private readonly IPsqlDbContext _psqlDbContext;
 
-    public CandidateRepository(IPsqlDbContext psqlDbContext, IMapper mapper)
-    {
-        _psqlDbContext = psqlDbContext;
-        _mapper = mapper;
-    }
+    public CandidateRepository(IPsqlDbContext psqlDbContext) => _psqlDbContext = psqlDbContext;
 
-    public async Task<Candidate?> Get(int id)
+    public async Task<Candidate?> Get(int id, IDbTransaction? transaction = null)
     {
         var sql = @"
                     SELECT c.*, e.*, v.*
@@ -34,12 +29,13 @@ public class CandidateRepository : ICandidateRepository
 
         try
         {
-            var candidates = connection.Query<Candidate, Election, Voter, Candidate>(
+            var candidates = (await connection.QueryAsync<Candidate, Election, Voter, Candidate>(
                 sql,
                 (candidate, election, voter) => MapCandidate(candidateDictionary, candidate, election, voter),
                 new { id },
+                transaction,
                 splitOn: "Id,Id"
-            ).Distinct().ToList();
+            )).Distinct().ToList();
 
             return candidates.FirstOrDefault();
         }
@@ -49,7 +45,7 @@ public class CandidateRepository : ICandidateRepository
         }
     }
 
-    public async Task<IEnumerable<Candidate>> GetAll()
+    public async Task<IEnumerable<Candidate>> GetAll(IDbTransaction? transaction = null)
     {
         var sql = @"
                 SELECT c.*, e.*, v.*
@@ -61,44 +57,69 @@ public class CandidateRepository : ICandidateRepository
 
         var candidateDictionary = new Dictionary<int, Candidate>();
 
-        var candidates = connection.Query<Candidate, Election, Voter?, Candidate>(
+        var candidates = (await connection.QueryAsync<Candidate, Election, Voter?, Candidate>(
             sql,
             (candidate, election, voter) => MapCandidate(candidateDictionary, candidate, election, voter),
+            transaction: transaction,
             splitOn: "Id,Id"
-        ).Distinct().ToList();
+        )).Distinct().ToList();
 
         return candidates;
     }
 
-    public async Task<int> Create(CreateCandidateCommand createCommand)
+    public async Task<IEnumerable<Candidate>> GetAll(int electionId, IDbTransaction? transaction = null)
     {
-        var sql = @"INSERT INTO candidates(name, electionid) VALUES (@Name, @ElectionId) RETURNING Id";
+        var sql = @"
+                SELECT c.*, e.*, v.*
+                FROM Candidates c
+                JOIN Elections e ON c.ElectionId = e.Id
+                LEFT JOIN Voters v ON c.Id = v.VotedCandidateId
+                WHERE e.Id = @ElectionId";
 
         using var connection = _psqlDbContext.CreateConnection();
 
-        var id = await connection.ExecuteScalarAsync(sql, createCommand);
+        var candidateDictionary = new Dictionary<int, Candidate>();
+
+        var candidates = (await connection.QueryAsync<Candidate, Election, Voter?, Candidate>(
+            sql,
+            (candidate, election, voter) => MapCandidate(candidateDictionary, candidate, election, voter),
+            new { electionId },
+            transaction,
+            splitOn: "Id,Id"
+        )).Distinct().ToList();
+
+        return candidates;
+    }
+
+    public async Task<int> Create(CreateCandidateCommand createCommand, IDbTransaction? transaction = null)
+    {
+        var sql = @"INSERT INTO Candidates(Name, ElectionId) VALUES (@Name, @ElectionId) RETURNING Id";
+
+        using var connection = _psqlDbContext.CreateConnection();
+
+        var id = await connection.ExecuteScalarAsync(sql, createCommand, transaction);
 
         return (int)(id ?? 0);
     }
 
-    public async Task Update(UpdateCandidateCommand updateCommand)
+    public async Task Update(UpdateCandidateCommand updateCommand, IDbTransaction? transaction = null)
     {
-        var sql = @"UPDATE candidates
-                        SET name = @Name
-                        WHERE id = @Id";
+        var sql = @"UPDATE Candidates
+                        SET Name = @Name
+                        WHERE Id = @Id";
 
         using var connection = _psqlDbContext.CreateConnection();
 
-        await connection.ExecuteAsync(sql, updateCommand);
+        await connection.ExecuteAsync(sql, updateCommand, transaction);
     }
 
-    public async Task Delete(int id)
+    public async Task Delete(int id, IDbTransaction? transaction = null)
     {
-        var sql = "DELETE FROM candidates WHERE id = @Id";
+        var sql = "DELETE FROM Candidates WHERE Id = @Id";
 
         var connection = _psqlDbContext.CreateConnection();
 
-        await connection.ExecuteAsync(sql, new { id });
+        await connection.ExecuteAsync(sql, new { id }, transaction);
     }
 
     private Candidate MapCandidate(Dictionary<int, Candidate> candidateDictionary, Candidate candidate,

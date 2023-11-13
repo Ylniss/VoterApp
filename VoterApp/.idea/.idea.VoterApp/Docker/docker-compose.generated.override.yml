@@ -7,16 +7,28 @@ services:
       target: "base"
     command: []
     entrypoint:
-    - "dotnet"
-    - "/app/bin/Debug/net7.0/VoterApp.Api.dll"
+    - "/riderDebugger/linux-x64/dotnet/dotnet"
+    - "/riderDebugger/JetBrains.Debugger.Worker.exe"
+    - "--mode=server"
+    - "--frontend-port=57100"
+    - "--backend-port=57300"
     environment:
       DOTNET_USE_POLLING_FILE_WATCHER: "true"
       NUGET_PACKAGES: "C:\\Users\\zupqa\\.nuget\\packages"
       NUGET_FALLBACK_PACKAGES: "C:\\Users\\zupqa\\.nuget\\packages"
+      RIDER_DEBUGGER_LOG_DIR: "/riderLogs"
+      RESHARPER_LOG_CONF: "/riderLogsConf/backend-log.xml"
     image: "voterapp.api:dev"
-    ports: []
+    ports:
+    - "127.0.0.1:57004:57100"
+    - "127.0.0.1:57204:57300"
     volumes:
     - "C:\\Users\\zupqa\\.nuget\\packages:/root/.nuget/fallbackpackages"
     - "C:\\Users\\zupqa\\Stuff\\Repo\\VoterApp\\VoterApp\\VoterApp.Api:/app:rw"
     - "C:\\Users\\zupqa\\Stuff\\Repo\\VoterApp\\VoterApp:/src:rw"
+    - "C:\\Users\\zupqa\\AppData\\Local\\JetBrains\\RiderRemoteDebugger\\2023.2.3\\\
+      Linux64:/riderDebugger"
+    - "C:\\Program Files\\JetBrains\\JetBrains Rider 2022.3.2/bin:/riderLogsConf"
+    - "C:\\Users\\zupqa\\AppData\\Local\\JetBrains\\Rider2023.2\\log\\DebuggerWorker\\\
+      JetBrains.Debugger.Worker.2023_11_13_14_28_15:/riderLogs:rw"
     working_dir: "/app"

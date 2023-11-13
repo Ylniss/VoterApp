@@ -141,6 +141,26 @@ public class CandidateApiTests :
     }
 
     [Fact]
+    public async Task Post_ElectionDoesntExistForCandidate_ShouldReturnStatusCode400With1ValidationError()
+    {
+        // Arrange
+        var request = ApiCandidates;
+        var body = new
+        {
+            Name = "Bogdan",
+            ElectionId = int.MaxValue
+        };
+
+        // Act
+        var response = await _client.PostAsync(request, JsonContent.Create(body));
+        var errorResponse = await response.Content.ReadAsAsync<ApiValidationErrorResponse>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        errorResponse.Errors.Count().ShouldBe(1);
+    }
+
+    [Fact]
     public async Task Put_UpdateObjectId1_ShouldReturnStatusCode200()
     {
         // Arrange

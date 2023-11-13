@@ -19,8 +19,8 @@ public class Election : BaseEntity
     public bool Archived { get; private set; }
     public Guid RoomNumber { get; }
 
-    public List<Voter> Voters { get; } = new();
-    public List<Candidate> Candidates { get; } = new();
+    public List<Voter> Voters { get; set; } = new();
+    public List<Candidate> Candidates { get; set; } = new();
 
     public void Archive()
     {

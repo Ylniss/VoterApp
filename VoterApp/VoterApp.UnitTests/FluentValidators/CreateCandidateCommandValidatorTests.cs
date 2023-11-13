@@ -17,7 +17,8 @@ public class CreateCandidateCommandValidatorTests : IClassFixture<ValidatorFixtu
         {
             Name = "Super Long Name That Doesnt Even Exist And Never Will"
         };
-        var validator = new CreateCandidateCommandValidator(_fixture.MockCandidateRepo.Object);
+        var validator =
+            new CreateCandidateCommandValidator(_fixture.MockCandidateRepo.Object, _fixture.MockElectionRepo.Object);
 
         // Act
         var result = await validator.ValidateAsync(createCandidateCommand);
@@ -31,7 +32,9 @@ public class CreateCandidateCommandValidatorTests : IClassFixture<ValidatorFixtu
     {
         // Arrange
         var createCandidateCommand = _fixture.ValidCreateCandidateCommand with { Name = "A" };
-        var validator = new CreateCandidateCommandValidator(_fixture.MockCandidateRepo.Object);
+        var validator =
+            new CreateCandidateCommandValidator(_fixture.MockCandidateRepo.Object, _fixture.MockElectionRepo.Object);
+
         // Act
         var result = await validator.ValidateAsync(createCandidateCommand);
 
@@ -47,7 +50,9 @@ public class CreateCandidateCommandValidatorTests : IClassFixture<ValidatorFixtu
         {
             Name = "Same Name"
         };
-        var validator = new CreateCandidateCommandValidator(_fixture.MockCandidateRepo.Object);
+        var validator =
+            new CreateCandidateCommandValidator(_fixture.MockCandidateRepo.Object, _fixture.MockElectionRepo.Object);
+
         // Act
         var result = await validator.ValidateAsync(createCandidateCommand);
 

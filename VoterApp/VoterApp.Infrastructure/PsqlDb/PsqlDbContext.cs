@@ -84,7 +84,7 @@ public class PsqlDbContext : IPsqlDbContext
                         Id SERIAL PRIMARY KEY,
                         Topic VARCHAR NOT NULL,
                         Archived BOOLEAN NOT NULL,
-                        RoomNumber UUID NOT NULL UNIQUE
+                        RoomNumber UUID NOT NULL UNIQUE DEFAULT gen_random_uuid ()
                 );",
             @"               
                     CREATE TABLE IF NOT EXISTS Candidates (
