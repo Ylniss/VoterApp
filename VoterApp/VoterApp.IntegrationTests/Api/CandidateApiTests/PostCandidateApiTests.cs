@@ -3,62 +3,27 @@ using System.Net.Http.Json;
 using Shouldly;
 using VoterApp.Api.ErrorResponses;
 using VoterApp.Application.Common.Responses;
-using VoterApp.Application.Features.Candidates.Dtos;
 
-namespace VoterApp.IntegrationTests.Api;
+namespace VoterApp.IntegrationTests.Api.CandidateApiTests;
 
-public class CandidateApiTests :
-    IClassFixture<ApiWebApplicationFactory>
+[Collection("Database collection")]
+public class PostCandidateApiTests : IAsyncLifetime
 {
     private const string ApiCandidates = "api/candidates";
     private readonly HttpClient _client;
+    private readonly Func<Task> _resetDatabase;
 
-    public CandidateApiTests(
-        ApiWebApplicationFactory factory) =>
-        _client = factory.CreateClient();
-
-    [Fact]
-    public async Task Get_Id1ThatExists_ShouldReturnStatusCode200WithObjectThatHasId1()
+    public PostCandidateApiTests(
+        ApiWebApplicationFactory factory)
     {
-        // Arrange
-        var request = $"{ApiCandidates}/1";
-
-        // Act
-        var response = await _client.GetAsync(request);
-        var candidateDto = await response.Content.ReadAsAsync<CandidateDto>();
-
-        // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        candidateDto.Id.ShouldBe(1);
+        _resetDatabase = factory.ResetDatabaseAsync;
+        _client = factory.Client;
     }
 
-    [Fact]
-    public async Task GetAll_ShouldReturn4Objects()
-    {
-        // Arrange
-        var request = ApiCandidates;
+    public Task InitializeAsync() => Task.CompletedTask;
 
-        // Act
-        var response = await _client.GetAsync(request);
-        var candidates = await response.Content.ReadAsAsync<IEnumerable<CandidateDto>>();
+    public Task DisposeAsync() => _resetDatabase();
 
-        // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        candidates.Count().ShouldBe(4);
-    }
-
-    [Fact]
-    public async Task Get_IdThatDoesntExist_ShouldReturnStatusCode404()
-    {
-        // Arrange
-        var request = $"{ApiCandidates}/{int.MaxValue}";
-
-        // Act
-        var response = await _client.GetAsync(request);
-
-        // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-    }
 
     [Fact]
     public async Task Post_ValidObjectInBody_ShouldReturnStatusCode201()
@@ -158,67 +123,5 @@ public class CandidateApiTests :
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         errorResponse.Errors.Count().ShouldBe(1);
-    }
-
-    [Fact]
-    public async Task Put_UpdateObjectId1_ShouldReturnStatusCode200()
-    {
-        // Arrange
-        var request = $"{ApiCandidates}/1";
-        var body = new
-        {
-            Name = "NewBogdan",
-            ElectionId = 1
-        };
-
-        // Act
-        var response = await _client.PutAsync(request, JsonContent.Create(body));
-
-        // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
-    }
-
-    [Fact]
-    public async Task Put_IdThatDoesntExist_ShouldReturnStatusCode404()
-    {
-        // Arrange
-        var request = $"{ApiCandidates}/{int.MaxValue}";
-        var body = new
-        {
-            Name = "NewBogdan",
-            ElectionId = 1
-        };
-
-        // Act
-        var response = await _client.PutAsync(request, JsonContent.Create(body));
-
-        // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-    }
-
-    [Fact]
-    public async Task Delete_Id1ThatExists_ShouldReturnStatusCode200()
-    {
-        // Arrange
-        var request = $"{ApiCandidates}/1";
-
-        // Act
-        var response = await _client.DeleteAsync(request);
-
-        // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
-    }
-
-    [Fact]
-    public async Task Delete_IdThatDoesntExist_ShouldReturnStatusCode404()
-    {
-        // Arrange
-        var request = $"{ApiCandidates}/{int.MaxValue}";
-
-        // Act
-        var response = await _client.DeleteAsync(request);
-
-        // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 }

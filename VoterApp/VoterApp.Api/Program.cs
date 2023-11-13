@@ -29,15 +29,15 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+using var scope = app.Services.CreateScope();
+var context = scope.ServiceProvider.GetRequiredService<IPsqlDbContext>();
+await context.Init();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-
-    using var scope = app.Services.CreateScope();
-    var context = scope.ServiceProvider.GetRequiredService<IPsqlDbContext>();
-    await context.Init();
 }
 
 app.UseStatusCodePagesWithReExecute("/errors/{0}");

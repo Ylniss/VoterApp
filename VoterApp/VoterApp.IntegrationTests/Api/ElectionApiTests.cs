@@ -7,15 +7,23 @@ using VoterApp.Application.Features.Elections.Dtos;
 
 namespace VoterApp.IntegrationTests.Api;
 
-public class ElectionApiTests :
-    IClassFixture<ApiWebApplicationFactory>
+[Collection("Database collection")]
+public class ElectionApiTests : IAsyncLifetime
 {
     private const string ApiElections = "api/elections";
     private readonly HttpClient _client;
+    private readonly Func<Task> _resetDatabase;
 
     public ElectionApiTests(
-        ApiWebApplicationFactory factory) =>
-        _client = factory.CreateClient();
+        ApiWebApplicationFactory factory)
+    {
+        _resetDatabase = factory.ResetDatabaseAsync;
+        _client = factory.Client;
+    }
+
+    public Task InitializeAsync() => Task.CompletedTask;
+
+    public Task DisposeAsync() => _resetDatabase();
 
     [Fact]
     public async Task Get_Id1ThatExists_ShouldReturnStatusCode200WithObjectThatHasId1()

@@ -122,7 +122,7 @@ public class CandidateRepository : ICandidateRepository
         await connection.ExecuteAsync(sql, new { id }, transaction);
     }
 
-    private Candidate MapCandidate(Dictionary<int, Candidate> candidateDictionary, Candidate candidate,
+    private static Candidate MapCandidate(Dictionary<int, Candidate> candidateDictionary, Candidate candidate,
         Election election, Voter? voter)
     {
         if (!candidateDictionary.TryGetValue(candidate.Id, out var candidateEntry))

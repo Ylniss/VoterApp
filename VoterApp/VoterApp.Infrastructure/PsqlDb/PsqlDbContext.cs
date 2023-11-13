@@ -37,6 +37,30 @@ public class PsqlDbContext : IPsqlDbContext
         return new NpgsqlConnection(builder.ToString());
     }
 
+    public async Task CleanTablesAsync(string connectionString)
+    {
+        using var connection = CreateConnection(connectionString, _dbName);
+        connection.Open();
+
+        using var transaction = connection.BeginTransaction();
+        try
+        {
+            List<string> queries = new()
+            {
+                "DELETE FROM Voters;",
+                "DELETE FROM Candidates;",
+                "DELETE FROM Elections;"
+            };
+            await ExecuteQueriesInTransaction(connection, transaction, queries);
+            transaction.Commit();
+        }
+        catch (Exception)
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+
     private async Task CreateDatabaseIfDoesntExist()
     {
         // before we can use our database, first we have to create it using default 'postgres' db
