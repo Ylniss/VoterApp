@@ -12,15 +12,18 @@ public class UpdateCandidateCommandValidator : AbstractValidator<UpdateCandidate
     {
         _candidateRepository = candidateRepository;
 
-        RuleFor(x => x.Name)
+        RuleFor(command => command.Name)
             .NotEmpty().WithMessage(Validation.Messages.IsRequired)
+            .MinimumLength(Validation.MinNameLength).WithMessage(Validation.Messages.MinLength)
             .MaximumLength(Validation.MaxNameLength).WithMessage(Validation.Messages.MaxLength)
-            .MustAsync(BeUniqueName).WithMessage(Validation.Messages.MustBeUnique);
+            .MustAsync(BeUniqueNameInElection).WithMessage(Validation.Messages.MustBeUnique);
     }
 
-    private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
+    private async Task<bool> BeUniqueNameInElection(UpdateCandidateCommand command, string name,
+        CancellationToken cancellationToken)
     {
         var candidates = await _candidateRepository.GetAll();
-        return candidates.All(x => x.Name != name);
+        return candidates.Where(c => c.Election.Id == command.ElectionId)
+            .All(c => c.Name != name);
     }
 }

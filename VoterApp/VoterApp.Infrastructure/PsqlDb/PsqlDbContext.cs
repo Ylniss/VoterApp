@@ -97,7 +97,7 @@ public class PsqlDbContext : IPsqlDbContext
                         Id SERIAL PRIMARY KEY,
                         Name VARCHAR NOT NULL,
                         ElectionId INTEGER NOT NULL REFERENCES Elections(Id),
-                        VotedCandidateId INTEGER REFERENCES Candidates(Id),
+                        VotedCandidateId INTEGER REFERENCES Candidates(Id) ON DELETE SET NULL,
                         KeyPhrase VARCHAR NOT NULL,
                         UNIQUE (ElectionId, KeyPhrase)
                 );"

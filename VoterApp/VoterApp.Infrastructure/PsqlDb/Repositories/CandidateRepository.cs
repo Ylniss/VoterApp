@@ -36,21 +36,7 @@ public class CandidateRepository : ICandidateRepository
         {
             var candidates = connection.Query<Candidate, Election, Voter, Candidate>(
                 sql,
-                (candidate, election, voter) =>
-                {
-                    if (!candidateDictionary.TryGetValue(candidate.Id, out var candidateEntry))
-                    {
-                        candidateEntry = candidate;
-                        candidateEntry.Election = election;
-                        election.Candidates.Add(candidateEntry);
-                        candidateDictionary.Add(candidateEntry.Id, candidateEntry);
-                    }
-
-                    candidateEntry.Voters.Add(voter);
-                    voter.VotedCandidate = candidate;
-
-                    return candidateEntry;
-                },
+                (candidate, election, voter) => MapCandidate(candidateDictionary, candidate, election, voter),
                 new { id },
                 splitOn: "Id,Id"
             ).Distinct().ToList();
@@ -65,11 +51,23 @@ public class CandidateRepository : ICandidateRepository
 
     public async Task<IEnumerable<Candidate>> GetAll()
     {
-        var sql = "SELECT id, name FROM candidates";
+        var sql = @"
+                SELECT c.*, e.*, v.*
+                FROM Candidates c
+                JOIN Elections e ON c.ElectionId = e.Id
+                LEFT JOIN Voters v ON c.Id = v.VotedCandidateId;";
 
         using var connection = _psqlDbContext.CreateConnection();
 
-        return await connection.QueryAsync<Candidate>(sql);
+        var candidateDictionary = new Dictionary<int, Candidate>();
+
+        var candidates = connection.Query<Candidate, Election, Voter?, Candidate>(
+            sql,
+            (candidate, election, voter) => MapCandidate(candidateDictionary, candidate, election, voter),
+            splitOn: "Id,Id"
+        ).Distinct().ToList();
+
+        return candidates;
     }
 
     public async Task<int> Create(CreateCandidateCommand createCommand)
@@ -101,5 +99,27 @@ public class CandidateRepository : ICandidateRepository
         var connection = _psqlDbContext.CreateConnection();
 
         await connection.ExecuteAsync(sql, new { id });
+    }
+
+    private Candidate MapCandidate(Dictionary<int, Candidate> candidateDictionary, Candidate candidate,
+        Election election, Voter? voter)
+    {
+        if (!candidateDictionary.TryGetValue(candidate.Id, out var candidateEntry))
+        {
+            candidateEntry = candidate;
+            candidateEntry.Election = election;
+            election.Candidates.Add(candidateEntry);
+            candidateDictionary.Add(candidateEntry.Id, candidateEntry);
+        }
+
+        // Check for null in case of LEFT JOIN (if a candidate has no voters)
+        if (voter != null)
+        {
+            candidateEntry.Voters.Add(voter);
+            voter.VotedCandidate = candidate;
+            voter.Election = candidateEntry.Election;
+        }
+
+        return candidateEntry;
     }
 }
