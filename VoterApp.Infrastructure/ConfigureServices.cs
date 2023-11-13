@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VoterApp.Application.Contracts;
 using VoterApp.Infrastructure.Parsers;
 using VoterApp.Infrastructure.PsqlDb;
+using VoterApp.Infrastructure.PsqlDb.InitDataProviders;
 using VoterApp.Infrastructure.PsqlDb.Repositories;
 
 namespace VoterApp.Infrastructure;
@@ -13,6 +14,7 @@ public static class ConfigureServices
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+        services.AddScoped<IInitDataProvider, InitDataProvider>();
         services.AddScoped<IPsqlDbContext, PsqlDbContext>();
 
         services.AddScoped<IElectionRepository, ElectionRepository>();

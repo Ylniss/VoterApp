@@ -3,6 +3,7 @@ using Dapper;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using VoterApp.Infrastructure.Parsers;
+using VoterApp.Infrastructure.PsqlDb.InitDataProviders;
 
 namespace VoterApp.Infrastructure.PsqlDb;
 
@@ -10,10 +11,13 @@ public class PsqlDbContext : IPsqlDbContext
 {
     private readonly string? _connectionString;
     private readonly string _dbName;
+    private readonly IInitDataProvider _initDataProvider;
     private readonly ILogger<PsqlDbContext> _logger;
 
-    public PsqlDbContext(IConnectionStringParser connectionStringParser, ILogger<PsqlDbContext> logger)
+    public PsqlDbContext(IConnectionStringParser connectionStringParser, IInitDataProvider initDataProvider,
+        ILogger<PsqlDbContext> logger)
     {
+        _initDataProvider = initDataProvider;
         _logger = logger;
         _connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         _dbName = connectionStringParser.GetValue("Database", _connectionString);
@@ -64,7 +68,7 @@ public class PsqlDbContext : IPsqlDbContext
         {
             await CreateTables(connection, transaction);
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Test")
-                await CreateTestData(connection, transaction);
+                await InsertTestData(connection, transaction);
 
             transaction.Commit();
         }
@@ -75,62 +79,15 @@ public class PsqlDbContext : IPsqlDbContext
         }
     }
 
-    private static async Task CreateTables(IDbConnection connection, IDbTransaction transaction)
+    private async Task CreateTables(IDbConnection connection, IDbTransaction transaction)
     {
-        List<string> queries = new()
-        {
-            @"    
-                    CREATE TABLE IF NOT EXISTS Elections (
-                        Id SERIAL PRIMARY KEY,
-                        Topic VARCHAR NOT NULL,
-                        Archived BOOLEAN NOT NULL,
-                        RoomNumber UUID NOT NULL UNIQUE DEFAULT gen_random_uuid ()
-                );",
-            @"               
-                    CREATE TABLE IF NOT EXISTS Candidates (
-                        Id SERIAL PRIMARY KEY,
-                        Name VARCHAR NOT NULL,
-                        ElectionId INTEGER NOT NULL REFERENCES Elections(Id)
-                );",
-            @"    
-                    CREATE TABLE IF NOT EXISTS Voters (
-                        Id SERIAL PRIMARY KEY,
-                        Name VARCHAR NOT NULL,
-                        ElectionId INTEGER NOT NULL REFERENCES Elections(Id),
-                        VotedCandidateId INTEGER REFERENCES Candidates(Id) ON DELETE SET NULL,
-                        KeyPhrase VARCHAR NOT NULL,
-                        UNIQUE (ElectionId, KeyPhrase)
-                );"
-        };
+        var queries = _initDataProvider.GetSchemaQueries();
         await ExecuteQueriesInTransaction(connection, transaction, queries);
     }
 
-    private static async Task CreateTestData(IDbConnection connection, IDbTransaction transaction)
+    private async Task InsertTestData(IDbConnection connection, IDbTransaction transaction)
     {
-        List<string> queries = new()
-        {
-            @"
-                        INSERT INTO elections(topic, archived, roomnumber)
-                        VALUES 
-                            ('Choose your man', false, 'c7f8b63d-4ca7-41f8-bd28-54ff5d41dc13'),
-                            ('Select yo characta', false, '4de96b78-c5d8-4cad-8c57-42ad89b4c9b3');",
-            @"
-                        INSERT INTO candidates(name, electionid)
-                        VALUES 
-                            ('Bogdan', 1),
-                            ('Gobdan', 2),
-                            ('Dobgan', 1),
-                            ('Topgun', 2);",
-            @"
-                        INSERT INTO voters(name, electionid, votedcandidateid, keyphrase) 
-                        VALUES 
-                            ('Chillman', 1, 1, '123'),
-                            ('Lilchan',1, 1, '321'),
-                            ('Nalchil',1, 3, '111'),
-                            ('Chinchin',2, null, '997'),
-                            ('Inchin',2, null, 'sikret'),
-                            ('BruhMan',2, null, 'elo');"
-        };
+        var queries = _initDataProvider.GetInsertQueries();
         await ExecuteQueriesInTransaction(connection, transaction, queries);
     }
 
