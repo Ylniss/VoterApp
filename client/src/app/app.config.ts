@@ -3,7 +3,11 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from '@angular/common/http';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loadingIndicatorInterceptor } from './core/interceptors/loading-indicator.interceptor';
 
@@ -13,6 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideHttpClient(
       withInterceptors([errorInterceptor, loadingIndicatorInterceptor]),
+      withFetch(),
     ),
   ],
 };

@@ -1,9 +1,26 @@
 <div class="d-flex flex-column align-items-center">
-  <p class="text-center " style="height: 3.5rem;">Provide topic for new election and create it. Add voters and
-    candidates.</p>
-  <form class="d-flex w-75">
-    <input class="form-control me-4" placeholder="Enter topic" type="text">
-    <button class="btn btn-outline-primary">Create</button>
+  <p class="text-center " style="height: 3.5rem;">
+    Provide topic for new election and create it. Add voters and
+    candidates.
+  </p>
+  <form (ngSubmit)="submit()" [formGroup]="form">
+    <div class="row">
+      <div class="col-9">
+        <input
+          [appValidationMessages]="[
+            {errorCode: 'required', message: Messages.TopicIsRequired},
+            {errorCode: 'minlength', message: Messages.TopicIsTooShort},
+            {errorCode: 'maxlength', message: Messages.TopicIsTooLong}
+          ]"
+          [formControl]="topic"
+          [placeholder]="'Enter topic'"
+          class="form-control me-4"
+        /></div>
+      <div class="col-3">
+        <app-submit-button [disabled]="!form.valid" [text]="'Create'"></app-submit-button>
+      </div>
+    </div>
+
+
   </form>
 </div>
-

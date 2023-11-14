@@ -42,3 +42,8 @@ a {
 .container p {
   margin-top: 1.5rem;
 }
+
+.container input.form-control {
+  background-color: $border-color;
+  color: $text-color;
+}

@@ -41,9 +41,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
-
 app.UseMiddleware<ExceptionMiddleware>();
-
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
 app.MapControllers();

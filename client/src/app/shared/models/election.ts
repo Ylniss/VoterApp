@@ -4,6 +4,10 @@ export interface IElection {
   roomCode: string;
 }
 
+export interface ICreateElection {
+  topic: string;
+}
+
 export interface ICreateElectionResponse {
   id: number;
   message: string;
