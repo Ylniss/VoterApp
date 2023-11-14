@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VoterApp.Api.ErrorResponses;
-using VoterApp.Application.Common.Responses;
 using VoterApp.Application.Features.Elections.Commands.CreateElection;
 using VoterApp.Application.Features.Elections.Dtos;
 using VoterApp.Application.Features.Elections.Queries.GetElection;
@@ -34,7 +33,7 @@ public class ElectionsController : BaseApiController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiValidationErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<CommandResponse>> Create([FromBody] CreateElectionDto candidate)
+    public async Task<ActionResult<CreateElectionCommandResponse>> Create([FromBody] CreateElectionDto candidate)
     {
         var command = _mapper.Map<CreateElectionCommand>(candidate);
         var result = await _mediator.Send(command);

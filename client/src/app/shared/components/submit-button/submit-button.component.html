@@ -1,0 +1,8 @@
+<button [disabled]="disabled || loading" class="btn btn-outline-primary" type="submit">
+  <ng-container *ngIf="!loading; else savingSpinnerButton">
+    {{ text }}
+  </ng-container>
+  <ng-template #savingSpinnerButton>
+    <i class="fa fa-spin fa-spinner"></i>
+  </ng-template>
+</button>

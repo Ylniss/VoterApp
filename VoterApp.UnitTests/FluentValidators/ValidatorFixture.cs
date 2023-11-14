@@ -14,10 +14,15 @@ public class ValidatorFixture
         MockCandidateRepo = new Mock<ICandidateRepository>();
         MockElectionRepo = new Mock<IElectionRepository>();
 
-        MockCandidateRepo.Setup(r => r.GetAll(null))
-            .ReturnsAsync(() => new List<Candidate> { new("Same Name", new Election("topic")) });
+        var election = new Election("topic")
+        {
+            Id = 1
+        };
 
-        MockElectionRepo.Setup(r => r.Get(It.IsAny<int>(), null)).ReturnsAsync(() => new Election("Topic name"));
+        MockCandidateRepo.Setup(r => r.GetAll(null))
+            .ReturnsAsync(() => new List<Candidate> { new("Same Name", election) });
+
+        MockElectionRepo.Setup(r => r.Get(It.IsAny<int>(), null)).ReturnsAsync(() => election);
     }
 
     public Mock<ICandidateRepository> MockCandidateRepo { get; }

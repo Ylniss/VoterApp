@@ -3,3 +3,9 @@ export interface IElection {
   topic: string;
   roomCode: string;
 }
+
+export interface ICreateElectionResponse {
+  id: number;
+  message: string;
+  roomCode: string;
+}
