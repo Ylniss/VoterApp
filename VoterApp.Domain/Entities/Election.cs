@@ -8,7 +8,7 @@ public class Election : BaseEntity
     {
         Topic = topic;
         Archived = false;
-        RoomNumber = Guid.NewGuid();
+        RoomCode = Guid.NewGuid();
     }
 
     private Election()
@@ -17,7 +17,7 @@ public class Election : BaseEntity
 
     public string Topic { get; set; }
     public bool Archived { get; private set; }
-    public Guid RoomNumber { get; }
+    public Guid RoomCode { get; }
 
     public List<Voter> Voters { get; set; } = new();
     public List<Candidate> Candidates { get; set; } = new();

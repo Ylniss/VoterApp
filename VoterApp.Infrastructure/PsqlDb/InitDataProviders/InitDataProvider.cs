@@ -10,7 +10,7 @@ public class InitDataProvider : IInitDataProvider
                         Id SERIAL PRIMARY KEY,
                         Topic VARCHAR NOT NULL,
                         Archived BOOLEAN NOT NULL,
-                        RoomNumber UUID NOT NULL UNIQUE DEFAULT gen_random_uuid ()
+                        RoomCode UUID NOT NULL UNIQUE DEFAULT gen_random_uuid ()
                 );",
             @"               
                     CREATE TABLE IF NOT EXISTS Candidates (
@@ -35,7 +35,7 @@ public class InitDataProvider : IInitDataProvider
         => new[]
         {
             @"
-                        INSERT INTO Elections(Topic, Archived, RoomNumber)
+                        INSERT INTO Elections(Topic, Archived, RoomCode)
                         VALUES 
                             ('Choose your man', false, 'c7f8b63d-4ca7-41f8-bd28-54ff5d41dc13'),
                             ('Select yo characta', false, '4de96b78-c5d8-4cad-8c57-42ad89b4c9b3');",

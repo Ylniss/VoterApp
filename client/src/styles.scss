@@ -1,1 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
+@import './app/shared/styles/colors.scss';
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import "../node_modules/bootstrap/scss/variables";
+
+body {
+  background-color: $background-color;
+  color: $text-color;
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: $primary-color;
+}
+
+a {
+  color: $secondary-color;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.card {
+  background-color: $border-color;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 3rem;
+}
+
+.container h1 {
+  margin-top: 1.75rem;
+}
+
+.container p {
+  margin-top: 1.5rem;
+}
