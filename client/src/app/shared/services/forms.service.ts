@@ -18,7 +18,7 @@ export class FormsService {
     }
 
     for (const key of Object.keys(error.errors)) {
-      const message = error.errors[key].join('<br>');
+      const message = error.errors[key];
       if (submittedForm?.controls[key] != null) {
         submittedForm.controls[key].setErrors(
           { remote: message },

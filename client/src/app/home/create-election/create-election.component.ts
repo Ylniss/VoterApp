@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CreateElectionService } from './create-election.service';
+import { ElectionsService } from '../../election/services/elections.service';
 import { BaseFormComponent } from '../../shared/components/base/base-form.component';
 import {
   ICreateElection,
@@ -16,6 +16,7 @@ import {
 import { SubmitButtonComponent } from '../../shared/components/submit-button/submit-button.component';
 import { ValidationMessagesDirective } from '../../core/directives/validation-messages.directive';
 import { Validation } from '../../core/constants/validation';
+import { NavigationExtras, Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-election',
@@ -39,7 +40,8 @@ export class CreateElectionComponent
   ]);
 
   private formBuilder = inject(FormBuilder);
-  private createElectionService = inject(CreateElectionService);
+  private router = inject(Router);
+  private electionsService = inject(ElectionsService);
 
   constructor() {
     super();
@@ -51,11 +53,12 @@ export class CreateElectionComponent
     this.initReactiveBindings();
 
     this.onSubmit((createElection) => {
-      this.createElectionService.create(createElection);
+      this.electionsService.create(createElection);
     });
 
     this.onSubmitSuccess((result: ICreateElectionResult) => {
-      this.toastr.success(result.message);
+      this.toastr.success(result.apiResult.message);
+      this.navigateToElectionRoomWithElectionId(result);
     });
 
     this.onSubmitError();
@@ -63,8 +66,22 @@ export class CreateElectionComponent
 
   override initReactiveBindings(): void {
     this.bind(
-      this.createElectionService.createElectionSuccess$,
+      this.electionsService.createElectionSuccess$,
       this.submitSuccess$,
+    );
+
+    this.bind(this.electionsService.createElectionError$, this.submitError$);
+  }
+
+  private navigateToElectionRoomWithElectionId(
+    result: ICreateElectionResult,
+  ): void {
+    const navigationExtras: NavigationExtras = {
+      state: { electionId: result.apiResult.id },
+    };
+    this.router.navigateByUrl(
+      `/election/${result.election.roomCode}`,
+      navigationExtras,
     );
   }
 

@@ -1,21 +1,27 @@
-import {HttpInterceptorFn} from '@angular/common/http';
-import {catchError, throwError} from "rxjs";
-import {NavigationExtras, Router} from "@angular/router";
-import {ToastrService} from "ngx-toastr";
-import {inject} from "@angular/core";
+import { HttpInterceptorFn } from '@angular/common/http';
+import { catchError, throwError } from 'rxjs';
+import { NavigationExtras, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { inject } from '@angular/core';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const toastr = inject(ToastrService)
+  const toastr = inject(ToastrService);
 
   return next(req).pipe(
-    catchError(error => {
+    catchError((error) => {
       if (error) {
         if (error.status === 400) {
           if (error.error.errors) {
-            throw error.error;
+            toastr.error(
+              error.error.errors.join('<br>'),
+              `${error.error.message} ${error.error.statusCode}`,
+              {
+                enableHtml: true,
+              },
+            );
           } else {
-            toastr.error(error.error.message, error.error.statusCode);
+            throw error.error;
           }
         }
         if (error.status === 401) {
@@ -25,11 +31,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           router.navigateByUrl('/not-found');
         }
         if (error.status === 500) {
-          const navigationExtras: NavigationExtras = {state: error.error}
+          const navigationExtras: NavigationExtras = { state: error.error };
           router.navigateByUrl('/server-error', navigationExtras);
         }
       }
 
       return throwError(() => error);
-    }));
+    }),
+  );
 };

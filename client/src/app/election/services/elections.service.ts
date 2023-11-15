@@ -5,39 +5,50 @@ import {
   ICreateElectionResult,
   IElection,
 } from '../../shared/models/election';
-import { catchError, EMPTY, map, Subject } from 'rxjs';
+import {
+  catchError,
+  map,
+  mergeMap,
+  Observable,
+  ReplaySubject,
+  Subject,
+  tap,
+} from 'rxjs';
 import { IApiError } from '../../core/models/api-error';
+import { IApiResult } from '../../core/models/api-result';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CreateElectionService {
+export class ElectionsService {
   electionsHttpService = inject(ElectionsHttpService);
   public createElectionSuccess$ = new Subject<ICreateElectionResult>();
   public createElectionError$ = new Subject<IApiError>();
-  private _election$ = new Subject<IElection>();
-  public election$ = this._election$.asObservable();
+  private _election$ = new ReplaySubject<IElection>();
+  public election$: Observable<IElection> = this._election$.asObservable();
 
   public create(createElection: ICreateElection): void {
     this.electionsHttpService
       .create(createElection)
       .pipe(
-        map((createElectionResponse: ICreateElectionResult) => {
-          const election: IElection = {
-            id: createElectionResponse.id,
-            roomCode: createElectionResponse.roomCode,
-            topic: createElection.topic,
-          };
-          this._election$.next(election);
-          return createElectionResponse;
+        mergeMap((apiResult: IApiResult) =>
+          this.electionsHttpService.get(apiResult.id).pipe(
+            map((election: IElection) => {
+              const createElectionResult: ICreateElectionResult = {
+                apiResult: apiResult,
+                election: election,
+              };
+
+              return createElectionResult;
+            }),
+          ),
+        ),
+        tap((createElectionResult) => {
+          this._election$.next(createElectionResult.election);
         }),
         catchError((error: any) => {
-          // this.appUtils.handleError(
-          //   error,
-          //   _('Error message'),
-          // );
           this.createElectionError$.next(error.error);
-          return EMPTY;
+          throw error;
         }),
       )
       .subscribe((createElectionResult) => {

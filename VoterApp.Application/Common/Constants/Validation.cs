@@ -11,8 +11,8 @@ public static class Validation
     public static class Messages
     {
         public const string IsRequired = "{PropertyName} is required.";
-        public const string MustBeUniqueInElection = "'{PropertyName}' must be unique in election.";
-        public const string MustExistElection = "'{PropertyName}' must have corresponding existing Election.";
+        public const string MustBeUniqueInElection = "{PropertyName} must be unique in election.";
+        public const string MustExistElection = "{PropertyName} must have corresponding existing Election.";
 
         public const string MustExistAndBeInSameElectionAsCandidate =
             "Voter and candidate must exist and be in the same election.";

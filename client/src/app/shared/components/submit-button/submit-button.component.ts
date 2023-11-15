@@ -1,11 +1,12 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoadingIndicatorService } from '../../services/loading-indicator.service';
+import { LoadingIndicatorComponent } from '../loading-indicator/loading-indicator.component';
 
 @Component({
   selector: 'app-submit-button',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LoadingIndicatorComponent],
   templateUrl: './submit-button.component.html',
 })
 export class SubmitButtonComponent implements OnInit {

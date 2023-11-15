@@ -1,4 +1,7 @@
 export const Validation = {
-  MinTopicLength: 3,
   MaxTopicLength: 150,
+  MinTopicLength: 3,
+
+  MaxNameLength: 25,
+  MinNameLength: 3,
 } as const;

@@ -1,1 +1,24 @@
-<p>election works!</p>
+<div class="container d-flex justify-content-around">
+  <app-logo [small]="true"/>
+</div>
+
+<div class="container">
+  <ng-container *ngIf="electionService.election$ | async as election">
+    <p class="mb-5 d-flex justify-content-center">
+      Create voters and candidates. Share your election room code: {{election.roomCode}}
+    </p>
+  </ng-container>
+
+  <div class="row d-flex justify-content-between">
+    <div class="col-6 d-flex flex-column align-items-center">
+      <h1>Voters</h1>
+      <app-voters/>
+    </div>
+    <div class="col-6 d-flex flex-column align-items-center">
+      <h1>Candidates</h1>
+      <app-candidates/>
+    </div>
+  </div>
+  <hr>
+  <app-vote/>
+</div>

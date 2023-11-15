@@ -1,0 +1,18 @@
+<form (ngSubmit)="submit()" [formGroup]="form">
+  <div class="row">
+    <div class="col-9">
+      <input
+        [appValidationMessages]="[
+            {errorCode: 'required', message: Messages.TopicIsRequired},
+            {errorCode: 'minlength', message: Messages.TopicIsTooShort},
+            {errorCode: 'maxlength', message: Messages.TopicIsTooLong}
+          ]"
+        [formControl]="name"
+        [placeholder]="'Enter voter name'"
+        class="form-control me-4"
+      /></div>
+    <div class="col-3">
+      <app-submit-button [disabled]="!form.valid" [text]="'Add'"></app-submit-button>
+    </div>
+  </div>
+</form>
