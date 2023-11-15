@@ -6,4 +6,7 @@ namespace VoterApp.Application.Features.Elections.Dtos;
 public record ElectionDto(int Id, string Topic, bool Archived, Guid RoomCode, IEnumerable<CandidateDto> Candidates,
     IEnumerable<VoterDto> Voters);
 
+public record ElectionPublicDto(string Topic, bool Archived, IEnumerable<CandidatePublicDto> Candidates,
+    IEnumerable<VoterPublicDto> Voters);
+
 public record CreateElectionDto(string Topic);

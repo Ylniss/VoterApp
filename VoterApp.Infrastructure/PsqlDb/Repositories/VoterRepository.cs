@@ -30,7 +30,7 @@ public class VoterRepository : IVoterRepository
         {
             var voters = (await connection.QueryAsync<Voter, Election, Candidate, Voter>(
                 sql,
-                (voter, election, candidate) => MapVoter(voterDictionary, voter, election, candidate),
+                MapVoter(voterDictionary),
                 new { id },
                 transaction,
                 splitOn: "Id,Id"
@@ -56,9 +56,9 @@ public class VoterRepository : IVoterRepository
 
         var voterDictionary = new Dictionary<int, Voter>();
 
-        var voters = (await connection.QueryAsync<Voter, Election, Candidate?, Voter>(
+        var voters = (await connection.QueryAsync(
             sql,
-            (voter, election, candidate) => MapVoter(voterDictionary, voter, election, candidate),
+            MapVoter(voterDictionary),
             transaction: transaction,
             splitOn: "Id,Id"
         )).Distinct().ToList();
@@ -79,9 +79,9 @@ public class VoterRepository : IVoterRepository
 
         var voterDictionary = new Dictionary<int, Voter>();
 
-        var voters = (await connection.QueryAsync<Voter, Election, Candidate?, Voter>(
+        var voters = (await connection.QueryAsync(
             sql,
-            (voter, election, candidate) => MapVoter(voterDictionary, voter, election, candidate),
+            MapVoter(voterDictionary),
             new { electionId },
             transaction,
             splitOn: "Id,Id"
@@ -123,20 +123,22 @@ public class VoterRepository : IVoterRepository
         await connection.ExecuteAsync(sql, new { id }, transaction);
     }
 
-    private Voter MapVoter(Dictionary<int, Voter> voterDictionary, Voter voter,
-        Election election, Candidate? candidate)
+    private static Func<Voter, Election, Candidate?, Voter> MapVoter(Dictionary<int, Voter> voterDictionary)
     {
-        if (!voterDictionary.TryGetValue(voter.Id, out var voterEntry))
+        return (voter, election, candidate) =>
         {
-            voterEntry = voter;
-            voterEntry.Election = election;
-            election.Voters.Add(voterEntry);
-            voterDictionary.Add(voterEntry.Id, voterEntry);
-        }
+            if (!voterDictionary.TryGetValue(voter.Id, out var voterEntry))
+            {
+                voterEntry = voter;
+                voterEntry.Election = election;
+                election.Voters.Add(voterEntry);
+                voterDictionary.Add(voterEntry.Id, voterEntry);
+            }
 
-        voter.VotedCandidate = candidate;
-        voter.Election = voterEntry.Election;
+            voter.VotedCandidate = candidate;
+            voter.Election = voterEntry.Election;
 
-        return voterEntry;
+            return voterEntry;
+        };
     }
 }

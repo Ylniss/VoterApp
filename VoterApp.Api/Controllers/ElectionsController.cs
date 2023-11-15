@@ -30,6 +30,16 @@ public class ElectionsController : BaseApiController
         return Ok(election);
     }
 
+    // GET api/elections/roomcode/42e13ac3-03a2-4c23-8c77-c866e6f318b8
+    [HttpGet("roomcode/{roomCode}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ElectionDto>> GetByRoomCode(Guid roomCode)
+    {
+        var election = await _mediator.Send(new GetElectionByRoomCodeQuery(roomCode));
+        return Ok(election);
+    }
+
     // POST api/elections
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]

@@ -19,6 +19,13 @@ public class CandidateMappingProfile : Profile
                 candidate.Voters.Count
             ));
 
+        CreateMap<Candidate, CandidatePublicDto>()
+            .ForMember(dest => dest.Votes, opt => opt.MapFrom(src => src.Voters.Count))
+            .ConstructUsing(candidate => new CandidatePublicDto(
+                candidate.Name,
+                candidate.Voters.Count
+            ));
+
         CreateMap<CreateCandidateDto, CreateCandidateCommand>();
         CreateMap<UpdateCandidateDto, UpdateCandidateCommand>()
             .ForMember(x => x.Id, opt => opt.Ignore())

@@ -20,6 +20,12 @@ public class VoterMappingProfile : Profile
                 voter.HasVoted
             ));
 
+        CreateMap<Voter, VoterPublicDto>()
+            .ConstructUsing(voter => new VoterPublicDto(
+                voter.Name,
+                voter.HasVoted
+            ));
+
         CreateMap<Voter, UpdateVoterCommand>()
             .ForMember(dest => dest.VotedCandidateId, opt => opt.MapFrom(src => src.VotedCandidate.Id))
             .ForMember(dest => dest.ElectionId, opt => opt.MapFrom(src => src.Election.Id));

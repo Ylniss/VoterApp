@@ -13,6 +13,10 @@ public class ElectionMappingProfile : Profile
             .ForMember(dest => dest.Candidates, opt => opt.MapFrom(src => src.Candidates))
             .ForMember(dest => dest.Voters, opt => opt.MapFrom(src => src.Voters));
 
+        CreateMap<Election, ElectionPublicDto>()
+            .ForMember(dest => dest.Candidates, opt => opt.MapFrom(src => src.Candidates))
+            .ForMember(dest => dest.Voters, opt => opt.MapFrom(src => src.Voters));
+
         CreateMap<CreateElectionDto, CreateElectionCommand>();
     }
 }

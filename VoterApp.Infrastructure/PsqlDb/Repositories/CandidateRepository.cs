@@ -31,7 +31,7 @@ public class CandidateRepository : ICandidateRepository
         {
             var candidates = (await connection.QueryAsync<Candidate, Election, Voter, Candidate>(
                 sql,
-                (candidate, election, voter) => MapCandidate(candidateDictionary, candidate, election, voter),
+                MapCandidate(candidateDictionary),
                 new { id },
                 transaction,
                 splitOn: "Id,Id"
@@ -57,9 +57,9 @@ public class CandidateRepository : ICandidateRepository
 
         var candidateDictionary = new Dictionary<int, Candidate>();
 
-        var candidates = (await connection.QueryAsync<Candidate, Election, Voter?, Candidate>(
+        var candidates = (await connection.QueryAsync(
             sql,
-            (candidate, election, voter) => MapCandidate(candidateDictionary, candidate, election, voter),
+            MapCandidate(candidateDictionary),
             transaction: transaction,
             splitOn: "Id,Id"
         )).Distinct().ToList();
@@ -80,9 +80,9 @@ public class CandidateRepository : ICandidateRepository
 
         var candidateDictionary = new Dictionary<int, Candidate>();
 
-        var candidates = (await connection.QueryAsync<Candidate, Election, Voter?, Candidate>(
+        var candidates = (await connection.QueryAsync(
             sql,
-            (candidate, election, voter) => MapCandidate(candidateDictionary, candidate, election, voter),
+            MapCandidate(candidateDictionary),
             new { electionId },
             transaction,
             splitOn: "Id,Id"
@@ -122,25 +122,28 @@ public class CandidateRepository : ICandidateRepository
         await connection.ExecuteAsync(sql, new { id }, transaction);
     }
 
-    private Candidate MapCandidate(Dictionary<int, Candidate> candidateDictionary, Candidate candidate,
-        Election election, Voter? voter)
+    private static Func<Candidate, Election, Voter?, Candidate> MapCandidate(
+        Dictionary<int, Candidate> candidateDictionary)
     {
-        if (!candidateDictionary.TryGetValue(candidate.Id, out var candidateEntry))
+        return (candidate, election, voter) =>
         {
-            candidateEntry = candidate;
-            candidateEntry.Election = election;
-            election.Candidates.Add(candidateEntry);
-            candidateDictionary.Add(candidateEntry.Id, candidateEntry);
-        }
+            if (!candidateDictionary.TryGetValue(candidate.Id, out var candidateEntry))
+            {
+                candidateEntry = candidate;
+                candidateEntry.Election = election;
+                election.Candidates.Add(candidateEntry);
+                candidateDictionary.Add(candidateEntry.Id, candidateEntry);
+            }
 
-        // Check for null in case of LEFT JOIN (if a candidate has no voters)
-        if (voter != null)
-        {
-            candidateEntry.Voters.Add(voter);
-            voter.VotedCandidate = candidate;
-            voter.Election = candidateEntry.Election;
-        }
+            // Check for null in case of LEFT JOIN (if a candidate has no voters)
+            if (voter != null)
+            {
+                candidateEntry.Voters.Add(voter);
+                voter.VotedCandidate = candidate;
+                voter.Election = candidateEntry.Election;
+            }
 
-        return candidateEntry;
+            return candidateEntry;
+        };
     }
 }
