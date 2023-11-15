@@ -11,6 +11,7 @@ import { LoadingIndicatorService } from '../../services/loading-indicator.servic
 export class SubmitButtonComponent implements OnInit {
   @Input() disabled = false;
   @Input() text: string = 'Save';
+  @Input() loadingText: string = 'Loading...';
 
   loadingIndicatorService = inject(LoadingIndicatorService);
 

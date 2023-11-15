@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseComponent } from './base.component';
 import { FormGroup } from '@angular/forms';
@@ -14,6 +7,8 @@ import { LoadingIndicatorService } from '../../services/loading-indicator.servic
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IApiError } from '../../../core/models/api-error';
 import { FormsService } from '../../services/forms.service';
+import { Messages } from '../../../core/constants/messages';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-base-form',
@@ -22,18 +17,18 @@ import { FormsService } from '../../services/forms.service';
   imports: [CommonModule],
 })
 export class BaseFormComponent<T> extends BaseComponent implements OnInit {
-  @Output()
-  public save = new EventEmitter<T>();
-
   @Input()
   public submitButtonText: string = 'Save';
 
   public form!: FormGroup;
   public submit$ = new Subject<T>();
-  public submitSuccess$ = new Subject<string>();
+  public submitSuccess$ = new Subject<any>();
   public submitError$ = new Subject<IApiError>();
   public cancel$ = new Subject<void>();
 
+  protected readonly Messages = Messages;
+
+  protected toastr = inject(ToastrService);
   protected formsService = inject(FormsService);
   protected loadingIndicatorService = inject(LoadingIndicatorService);
 
@@ -58,31 +53,36 @@ export class BaseFormComponent<T> extends BaseComponent implements OnInit {
   }
 
   public submit(): void {
-    this.save.emit(this.form.value);
     this.submit$.next(this.form.value);
   }
 
   protected onSubmit(action?: (entity: T) => void): void {
-    this.submit$.pipe(takeUntilDestroyed()).subscribe((entity) => {
-      if (action) action(entity);
-    });
+    this.submit$
+      .pipe(takeUntilDestroyed(this.destroyedRef))
+      .subscribe((entity) => {
+        if (action) action(entity);
+      });
   }
 
-  protected onSubmitSuccess(action?: () => void): void {
-    this.submitSuccess$.pipe(takeUntilDestroyed()).subscribe(() => {
-      if (action) action();
-    });
+  protected onSubmitSuccess(action?: (result: any) => void): void {
+    this.submitSuccess$
+      .pipe(takeUntilDestroyed(this.destroyedRef))
+      .subscribe((result) => {
+        if (action) action(result);
+      });
   }
 
   protected onSubmitError(action?: (error: IApiError) => void): void {
-    this.submitError$.pipe(takeUntilDestroyed()).subscribe((error) => {
-      this.formsService.handleRemoteErrors(error, this.form);
-      if (action) action(error);
-    });
+    this.submitError$
+      .pipe(takeUntilDestroyed(this.destroyedRef))
+      .subscribe((error) => {
+        this.formsService.handleRemoteErrors(error, this.form);
+        if (action) action(error);
+      });
   }
 
   protected onCancel(action?: () => void): void {
-    this.cancel$.pipe(takeUntilDestroyed()).subscribe(() => {
+    this.cancel$.pipe(takeUntilDestroyed(this.destroyedRef)).subscribe(() => {
       this.submit$.unsubscribe();
       if (action) action();
     });
@@ -97,7 +97,7 @@ export class BaseFormComponent<T> extends BaseComponent implements OnInit {
      * */
   }
 
-  protected initReactiveBinding(): void {
+  protected initReactiveBindings(): void {
     /*
      *  Override in derived class like this example:
      *  this.bind(this.myService.createMyEntitySuccess$, this.submitSuccess$);

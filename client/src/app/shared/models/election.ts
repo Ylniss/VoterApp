@@ -8,7 +8,7 @@ export interface ICreateElection {
   topic: string;
 }
 
-export interface ICreateElectionResponse {
+export interface ICreateElectionResult {
   id: number;
   message: string;
   roomCode: string;

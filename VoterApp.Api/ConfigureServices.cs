@@ -28,11 +28,8 @@ public static class ConfigureServices
 
         services.AddCors(options =>
         {
-            options.AddPolicy("CorsPolicy", builder => builder
-                .WithOrigins("http://localhost:4200")
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+            options.AddPolicy("CorsPolicy",
+                policy => { policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"); });
         });
 
         services.AddSingleton<IExceptionHandler, ExceptionHandler>();

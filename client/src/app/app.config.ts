@@ -10,6 +10,8 @@ import {
 } from '@angular/common/http';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loadingIndicatorInterceptor } from './core/interceptors/loading-indicator.interceptor';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideToastr } from 'ngx-toastr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,5 +21,7 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([errorInterceptor, loadingIndicatorInterceptor]),
       withFetch(),
     ),
+    provideAnimations(),
+    provideToastr(),
   ],
 };

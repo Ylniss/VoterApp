@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { ApiPaths } from '../../../core/enums/api-paths';
-import { ICreateElectionResponse } from '../../models/election';
+import { ICreateElection, ICreateElectionResult } from '../../models/election';
+import { ApiPaths } from '../../../core/constants/api-paths';
 
 @Injectable({
   providedIn: 'root',
@@ -13,10 +13,10 @@ export class ElectionsHttpService {
 
   httpClient = inject(HttpClient);
 
-  create(topic: string): Observable<ICreateElectionResponse> {
-    return this.httpClient.post<ICreateElectionResponse>(
+  create(createElection: ICreateElection): Observable<ICreateElectionResult> {
+    return this.httpClient.post<ICreateElectionResult>(
       `${this.baseUrl}/${ApiPaths.Elections}`,
-      topic,
+      createElection,
     );
   }
 }

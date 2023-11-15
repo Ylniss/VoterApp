@@ -30,6 +30,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseCors("CorsPolicy");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -40,9 +41,10 @@ if (app.Environment.IsDevelopment())
     await context.Init();
 }
 
+
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseCors("CorsPolicy");
+
 app.UseAuthorization();
 
 app.MapControllers();
@@ -58,6 +60,7 @@ app.Run();
 //     Log.CloseAndFlush();
 // }
 
+// Program must be public for integration tests custom web application factory
 public partial class Program
 {
 }
