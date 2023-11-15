@@ -6,8 +6,14 @@ export interface IVoter {
   electionId: number;
 }
 
+export interface IVoterPublic {
+  name: string;
+  hasVoted: boolean;
+}
+
 export interface ICreateVoter {
   name: string;
+  electionId: number;
 }
 
 export interface IUpdateVoter {

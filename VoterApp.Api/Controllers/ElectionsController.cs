@@ -44,9 +44,9 @@ public class ElectionsController : BaseApiController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiValidationErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<CommandResponse>> Create([FromBody] CreateElectionDto candidate)
+    public async Task<ActionResult<CommandResponse>> Create([FromBody] CreateElectionDto election)
     {
-        var command = _mapper.Map<CreateElectionCommand>(candidate);
+        var command = _mapper.Map<CreateElectionCommand>(election);
         var result = await _mediator.Send(command);
         return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
     }

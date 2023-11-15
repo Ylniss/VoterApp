@@ -5,6 +5,11 @@ export interface ICandidate {
   electionId: number;
 }
 
+export interface ICandidatePublic {
+  name: string;
+  votes: number;
+}
+
 export interface ICreateCandidate {
   name: string;
 }
