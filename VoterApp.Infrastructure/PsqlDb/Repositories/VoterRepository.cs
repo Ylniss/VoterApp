@@ -135,7 +135,7 @@ public class VoterRepository : IVoterRepository
                 voterDictionary.Add(voterEntry.Id, voterEntry);
             }
 
-            voter.VotedCandidate = candidate;
+            if (candidate != null) voterEntry.VotedCandidate = candidate;
             voter.Election = voterEntry.Election;
 
             return voterEntry;

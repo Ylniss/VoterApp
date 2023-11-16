@@ -7,6 +7,7 @@ export interface IVoter {
 }
 
 export interface IVoterPublic {
+  id: number;
   name: string;
   hasVoted: boolean;
 }

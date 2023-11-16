@@ -8,6 +8,5 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   standalone: true,
   imports: [CommonModule, NgbModule, RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {}

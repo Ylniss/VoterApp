@@ -1,1 +1,7 @@
-<p>candidates-public works!</p>
+<div *ngIf="(electionService.electionPublic$| async)?.candidates?.length != 0" class="d-flex flex-row mb-2">
+  <div class="col"><strong>Name</strong></div>
+  <div class="col d-flex justify-content-center"><strong>Votes</strong></div>
+</div>
+<div *ngFor="let candidate of (electionService.electionPublic$ | async)?.candidates">
+  <app-read-candidate-public [candidate]="candidate"/>
+</div>

@@ -1,0 +1,12 @@
+<div class="d-flex flex-row mb-2">
+  <div class="col word-wrap">{{candidate.name}}</div>
+  <div class="col d-flex justify-content-center">
+    {{candidate.votes}}
+  </div>
+  <div class="col-1">
+    <button (click)="openRollHistoryEdit()" class="icon-button"><i class="bi bi-pencil-square"></i></button>
+  </div>
+  <div class="col-1">
+    <button (click)="deleteCandidate()" class="icon-button"><i class="bi bi-trash-fill"></i></button>
+  </div>
+</div>

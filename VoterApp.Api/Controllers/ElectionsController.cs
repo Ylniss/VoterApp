@@ -35,7 +35,7 @@ public class ElectionsController : BaseApiController
     [HttpGet("roomcode/{roomCode:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ElectionDto>> GetByRoomCode(Guid roomCode)
+    public async Task<ActionResult<ElectionPublicDto>> GetByRoomCode(Guid roomCode)
     {
         var election = await _mediator.Send(new GetElectionByRoomCodeQuery(roomCode));
         return Ok(election);

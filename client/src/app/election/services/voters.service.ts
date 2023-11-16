@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { ICreateVoter, IUpdateVoter } from '../../shared/models/voter';
+import { ICreateVoter, IUpdateVoter, IVote } from '../../shared/models/voter';
 import { VotersHttpService } from '../../shared/services/http/voters-http.service';
 import { IApiResult } from '../../core/models/api-result';
 import { ToastrService } from 'ngx-toastr';
@@ -28,5 +28,11 @@ export class VotersService {
     return this.votersHttpService
       .delete(id)
       .pipe(tap((result) => this.toastr.success(result.message)));
+  }
+
+  public vote(vote: IVote): Observable<IApiResult> {
+    return this.votersHttpService
+      .vote(vote)
+      .pipe(tap(() => this.toastr.success('Vote successful.')));
   }
 }

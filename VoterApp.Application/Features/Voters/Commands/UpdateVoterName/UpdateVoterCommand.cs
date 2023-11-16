@@ -9,7 +9,7 @@ public record UpdateVoterCommand : IRequest<CommandResponse>
 {
     public int Id { get; init; }
     public string Name { get; init; }
-    public int? VotedCandidateId { get; init; } = null;
+    public int? VotedCandidateId { get; init; }
     public int ElectionId { get; init; }
 }
 
@@ -26,6 +26,8 @@ public class UpdateVoterCommandHandler : IRequestHandler<UpdateVoterCommand, Com
 
         if (voter is null)
             throw new NotFoundException(request.Id);
+
+        request = request with { VotedCandidateId = voter.VotedCandidate.Id };
 
         await _voterRepository.Update(request);
 

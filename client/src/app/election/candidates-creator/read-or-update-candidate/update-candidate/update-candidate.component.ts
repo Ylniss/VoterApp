@@ -1,6 +1,5 @@
 import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IUpdateVoter, IVoter } from '../../../../shared/models/voter';
 import { BaseFormComponent } from '../../../../shared/components/base/base-form.component';
 import {
   FormBuilder,
@@ -11,14 +10,18 @@ import {
   Validators,
 } from '@angular/forms';
 import { Validation } from '../../../../core/constants/validation';
-import { VotersService } from '../../../services/voters.service';
 import { ElectionsService } from '../../../services/elections.service';
 import { switchMap } from 'rxjs';
+import {
+  ICandidate,
+  IUpdateCandidate,
+} from '../../../../shared/models/candidate';
+import { CandidateService } from '../../../services/candidate.service';
 import { SubmitButtonComponent } from '../../../../shared/components/submit-button/submit-button.component';
 import { ValidationMessagesDirective } from '../../../../core/directives/validation-messages.directive';
 
 @Component({
-  selector: 'app-update-voter',
+  selector: 'app-update-candidate',
   standalone: true,
   imports: [
     CommonModule,
@@ -27,10 +30,10 @@ import { ValidationMessagesDirective } from '../../../../core/directives/validat
     ReactiveFormsModule,
     ValidationMessagesDirective,
   ],
-  templateUrl: './update-voter.component.html',
+  templateUrl: './update-candidate.component.html',
 })
-export class UpdateVoterComponent extends BaseFormComponent<IUpdateVoter> {
-  @Input() voter!: IVoter;
+export class UpdateCandidateComponent extends BaseFormComponent<IUpdateCandidate> {
+  @Input() candidate!: ICandidate;
 
   public name = new FormControl('', [
     Validators.required,
@@ -39,7 +42,7 @@ export class UpdateVoterComponent extends BaseFormComponent<IUpdateVoter> {
   ]);
 
   private formBuilder = inject(FormBuilder);
-  private voterService = inject(VotersService);
+  private candidateService = inject(CandidateService);
   private electionService = inject(ElectionsService);
 
   constructor() {
@@ -50,23 +53,23 @@ export class UpdateVoterComponent extends BaseFormComponent<IUpdateVoter> {
   override ngOnInit(): void {
     super.ngOnInit();
 
-    if (!this.voter)
-      throw new Error('UpdateVoterComponent voter is not initialized.');
+    if (!this.candidate)
+      throw new Error('UpdateCandidateComponent candidate is not initialized.');
 
     this.onSubmit()
       .pipe(
-        switchMap((updateVoter) =>
-          this.voterService.update(this.voter.id, updateVoter),
+        switchMap((updateCandidate) =>
+          this.candidateService.update(this.candidate.id, updateCandidate),
         ),
         switchMap(() =>
-          this.electionService.loadByElectionId(this.voter.electionId),
+          this.electionService.loadByElectionId(this.candidate.electionId),
         ),
       )
       .subscribe();
   }
 
-  protected override populateForm(updateVoter: IUpdateVoter): void {
-    this.formsService.populateControl(this.name, updateVoter.name);
+  protected override populateForm(updateCandidate: IUpdateCandidate): void {
+    this.formsService.populateControl(this.name, updateCandidate.name);
   }
 
   private createForm(): FormGroup {

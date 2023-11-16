@@ -1,1 +1,47 @@
-<p>vote works!</p>
+<form (ngSubmit)="submit()" [formGroup]="form">
+  <div class="row justify-content-between mt-3">
+    <div class="col">
+      <div class="d-inline-block" ngbDropdown>
+        <button class="btn btn-outline-primary" id="voterDropdown" ngbDropdownToggle type="button">
+          {{selectedVoterName}}
+        </button>
+        <div aria-labelledby="voterDropdown" ngbDropdownMenu>
+          <button (click)="selectVoter(voter.name)"
+                  *ngFor="let voter of (electionService.electionPublic$ | async)?.voters" class="dropdown-item"
+                  type="button">
+            {{ voter.name }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="d-inline-block" ngbDropdown>
+        <button class="btn btn-outline-primary" id="candidateDropdown" ngbDropdownToggle type="button">
+          {{selectedCandidateName}}
+        </button>
+        <div aria-labelledby="candidateDropdown" ngbDropdownMenu>
+          <button (click)="selectCandidate(candidate.name)"
+                  *ngFor="let candidate of (electionService.electionPublic$ | async)?.candidates" class="dropdown-item"
+                  type="button">
+            {{ candidate.name }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <input
+        [appValidationMessages]="[
+                  {errorCode: 'required', message: Messages.KeyPhraseIsRequired},
+                  {errorCode: 'minlength', message: Messages.KeyPhraseWrongLength},
+                  {errorCode: 'maxlength', message: Messages.KeyPhraseWrongLength}
+                ]"
+        [formControl]="keyPhrase"
+        [placeholder]="'Enter key phrase'"
+        class="form-control me-4"
+      />
+    </div>
+    <div class="col-3">
+      <app-submit-button [disabled]="!form.valid" [text]="'Vote'"></app-submit-button>
+    </div>
+  </div>
+</form>

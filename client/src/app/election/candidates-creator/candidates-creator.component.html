@@ -1,1 +1,11 @@
-<p>candidates works!</p>
+<div *ngIf="(electionService.election$ | async)?.candidates?.length != 0" class="d-flex flex-row mb-2">
+  <div class="col"><strong>Name</strong></div>
+  <div class="col d-flex justify-content-center"><strong>Votes</strong></div>
+  <div class="col-1"></div>
+  <div class="col-1"></div>
+</div>
+<div *ngFor="let candidate of (electionService.election$ | async)?.candidates">
+  <app-read-or-update-candidate [candidate]="candidate"/>
+</div>
+
+<app-create-candidate [roomCode]="roomCode"/>

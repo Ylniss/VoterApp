@@ -1,5 +1,5 @@
 <div class="d-flex flex-row mb-2">
-  <div class="col">{{voter.name}}</div>
+  <div class="col word-wrap">{{voter.name}}</div>
   <div class="col d-flex justify-content-center">
     <ng-container *ngIf="voter.hasVoted; else votedIcon">
       <i class="bi bi-check"></i>

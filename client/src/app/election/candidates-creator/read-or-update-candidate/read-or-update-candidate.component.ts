@@ -9,31 +9,31 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IVoter } from '../../../shared/models/voter';
 import { BaseDynamicContentComponent } from '../../../shared/components/base/base-dynamic-content.component';
-import { ReadVoterCreatorComponent } from './read-voter-creator/read-voter-creator.component';
-import { UpdateVoterComponent } from './update-voter/update-voter.component';
-import { VotersCreatorComponentModesService } from '../../services/voters-creator-component-modes.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReadOrUpdateMode } from '../../../shared/services/base-component-modes.service';
+import { CandidatesCreatorComponentModesService } from '../../services/candidates-creator-component-modes.service';
+import { ReadCandidateCreatorComponent } from './read-candidate-creator/read-candidate-creator.component';
+import { ICandidate } from '../../../shared/models/candidate';
+import { UpdateCandidateComponent } from './update-candidate/update-candidate.component';
 
 @Component({
-  selector: 'app-read-or-update-voter',
+  selector: 'app-read-or-update-candidate',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './read-or-update-voter.component.html',
+  templateUrl: './read-or-update-candidate.component.html',
 })
-export class ReadOrUpdateVoterComponent
+export class ReadOrUpdateCandidateComponent
   extends BaseDynamicContentComponent
   implements OnInit, AfterViewInit
 {
-  @Input() voter!: IVoter;
-  @ViewChild('dynamicReadOrUpdateVoterCreatorContent', {
+  @Input() candidate!: ICandidate;
+  @ViewChild('dynamicReadOrUpdateCandidateCreatorContent', {
     read: ViewContainerRef,
   })
   override viewContainerRef!: ViewContainerRef;
-  votersCreatorComponentModesService = inject(
-    VotersCreatorComponentModesService,
+  candidatesCreatorComponentModesService = inject(
+    CandidatesCreatorComponentModesService,
   );
   protected destroyedRef = inject(DestroyRef);
   private readLoaded: boolean = false;
@@ -42,10 +42,10 @@ export class ReadOrUpdateVoterComponent
   public loadReadComponent(): void {
     if (this.readLoaded) return;
 
-    this.loadComponent<ReadVoterCreatorComponent>(
-      ReadVoterCreatorComponent,
-      (readVoterCreatorComponent) => {
-        readVoterCreatorComponent.voter = this.voter;
+    this.loadComponent<ReadCandidateCreatorComponent>(
+      ReadCandidateCreatorComponent,
+      (readCandidateCreatorComponent) => {
+        readCandidateCreatorComponent.candidate = this.candidate;
       },
     );
     this.readLoaded = true;
@@ -55,12 +55,12 @@ export class ReadOrUpdateVoterComponent
   public loadUpdateComponent(): void {
     if (this.updateLoaded) return;
 
-    this.loadComponent<UpdateVoterComponent>(
-      UpdateVoterComponent,
-      (updateVoterComponent) => {
-        updateVoterComponent.voter = this.voter;
-        updateVoterComponent.initEntity = {
-          name: this.voter.name,
+    this.loadComponent<UpdateCandidateComponent>(
+      UpdateCandidateComponent,
+      (updateCandidateComponent) => {
+        updateCandidateComponent.candidate = this.candidate;
+        updateCandidateComponent.initEntity = {
+          name: this.candidate.name,
         };
       },
     );
@@ -70,24 +70,26 @@ export class ReadOrUpdateVoterComponent
   }
 
   ngOnInit(): void {
-    if (!this.voter)
-      throw new Error('ReadOrUpdateVoterComponent voter is not initialized.');
+    if (!this.candidate)
+      throw new Error(
+        'ReadOrUpdateCandidateComponent candidate is not initialized.',
+      );
   }
 
   ngAfterViewInit(): void {
     // hack: put it and the end of JS event queue to avoid errors
     setTimeout(() => {
-      this.votersCreatorComponentModesService.modes$
+      this.candidatesCreatorComponentModesService.modes$
         .pipe(takeUntilDestroyed(this.destroyedRef))
         .subscribe((modes) => {
-          const mode = modes.get(this.voter.id);
+          const mode = modes.get(this.candidate.id);
 
           if (mode === ReadOrUpdateMode.UPDATE) this.loadUpdateComponent();
           else if (mode === ReadOrUpdateMode.READ) this.loadReadComponent();
         });
 
-      this.votersCreatorComponentModesService.setMode(
-        this.voter.id,
+      this.candidatesCreatorComponentModesService.setMode(
+        this.candidate.id,
         ReadOrUpdateMode.READ,
       );
     }, 0);

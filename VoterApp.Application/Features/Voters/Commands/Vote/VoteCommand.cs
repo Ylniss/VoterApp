@@ -34,6 +34,6 @@ public class VoteCommandHandler : IRequestHandler<VoteCommand, CommandResponse>
         await _voterRepository.Update(updateCommand);
 
         return new CommandResponse(request.VoterId,
-            $"{voter.Name} ({voter.Id}) voter for {candidate.Name} ({candidate.Id}).");
+            $"{voter.Name} ({voter.Id}) voted for {candidate.Name} ({candidate.Id}).");
     }
 }

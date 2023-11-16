@@ -40,7 +40,7 @@ export class VotersHttpService {
 
   public vote(vote: IVote): Observable<IApiResult> {
     return this.httpClient.put<IApiResult>(
-      `${this.baseUrl}/${ApiPaths.Voters}`,
+      `${this.baseUrl}/${ApiPaths.VotersVote}`,
       vote,
     );
   }

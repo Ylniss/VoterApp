@@ -7,6 +7,6 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class VotersCreatorComponentModesService extends BaseComponentModesService<ReadOrUpdateMode> {
+export class CandidatesCreatorComponentModesService extends BaseComponentModesService<ReadOrUpdateMode> {
   override defaultMode = ReadOrUpdateMode.READ;
 }

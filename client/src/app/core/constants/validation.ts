@@ -4,4 +4,6 @@ export const Validation = {
 
   MaxNameLength: 25,
   MinNameLength: 3,
+
+  KeyPhraseLength: 12,
 } as const;

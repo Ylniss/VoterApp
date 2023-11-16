@@ -22,6 +22,7 @@ public class VoterMappingProfile : Profile
 
         CreateMap<Voter, VoterPublicDto>()
             .ConstructUsing(voter => new VoterPublicDto(
+                voter.Id,
                 voter.Name,
                 voter.HasVoted
             ));
