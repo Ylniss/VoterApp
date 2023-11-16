@@ -6,16 +6,7 @@ import {
   IElection,
   IElectionPublic,
 } from '../../shared/models/election';
-import {
-  catchError,
-  map,
-  mergeMap,
-  Observable,
-  ReplaySubject,
-  Subject,
-  tap,
-} from 'rxjs';
-import { IApiError } from '../../core/models/api-error';
+import { map, mergeMap, Observable, ReplaySubject, tap } from 'rxjs';
 import { IApiResult } from '../../core/models/api-result';
 import { UUID } from 'crypto';
 
@@ -23,8 +14,6 @@ import { UUID } from 'crypto';
   providedIn: 'root',
 })
 export class ElectionsService {
-  public createElectionSuccess$ = new Subject<ICreateElectionResult>();
-  public createElectionError$ = new Subject<IApiError>();
   private electionsHttpService = inject(ElectionsHttpService);
   private _election$ = new ReplaySubject<IElection>();
   public election$: Observable<IElection> = this._election$.asObservable();
@@ -32,39 +21,33 @@ export class ElectionsService {
   public electionPublic$: Observable<IElectionPublic> =
     this._electionPublic$.asObservable();
 
-  public create(createElection: ICreateElection): void {
-    this.electionsHttpService
-      .create(createElection)
-      .pipe(
-        mergeMap((apiResult: IApiResult) =>
-          this.electionsHttpService.get(apiResult.id).pipe(
-            map((election: IElection) => {
-              const createElectionResult: ICreateElectionResult = {
-                apiResult: apiResult,
-                election: election,
-              };
+  public create(
+    createElection: ICreateElection,
+  ): Observable<ICreateElectionResult> {
+    return this.electionsHttpService.create(createElection).pipe(
+      mergeMap((apiResult: IApiResult) =>
+        this.electionsHttpService.get(apiResult.id).pipe(
+          map((election: IElection) => {
+            const createElectionResult: ICreateElectionResult = {
+              apiResult: apiResult,
+              election: election,
+            };
 
-              return createElectionResult;
-            }),
-          ),
+            return createElectionResult;
+          }),
         ),
-        tap((createElectionResult) => {
-          this._election$.next(createElectionResult.election);
-        }),
-        catchError((error: any) => {
-          this.createElectionError$.next(error.error);
-          throw error;
-        }),
-      )
-      .subscribe((createElectionResult) => {
-        this.createElectionSuccess$.next(createElectionResult);
-      });
+      ),
+      tap((createElectionResult) => {
+        this._election$.next(createElectionResult.election);
+      }),
+    );
   }
 
-  public loadByRoomCode(roomCode: UUID): void {
-    this.electionsHttpService
+  public loadByRoomCode(roomCode: UUID): Observable<IElectionPublic> {
+    return this.electionsHttpService
       .getByRoomCode(roomCode)
-      .pipe(tap((electionPublic) => this._electionPublic$.next(electionPublic)))
-      .subscribe();
+      .pipe(
+        tap((electionPublic) => this._electionPublic$.next(electionPublic)),
+      );
   }
 }

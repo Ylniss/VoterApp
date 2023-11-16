@@ -4,18 +4,32 @@
 
 <div class="container">
   <ng-container *ngIf="electionService.election$ | async as election">
-    <p class="mb-5 d-flex justify-content-center">
-      Create voters and candidates. Share your election room code: {{election.roomCode}}
-    </p>
+    <div class="mb-5 d-flex flex-row justify-content-between">
+      <p class="row">
+        Create voters and candidates. Share your election room code
+      </p>
+      <p class="row">
+        --->
+      </p>
+      <p class="row">
+        {{election.roomCode}}
+      </p>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="electionService.electionPublic$ | async as election">
+    <h3 class="d-flex justify-content-center">
+      {{election.topic}}
+    </h3>
   </ng-container>
 
   <div class="row d-flex justify-content-between">
-    <div class="col-6 d-flex flex-column align-items-center">
-      <h1>Voters</h1>
+    <div class="col-6 d-flex flex-column">
+      <h1 class="d-flex justify-content-center">Voters</h1>
       <app-voters/>
     </div>
-    <div class="col-6 d-flex flex-column align-items-center">
-      <h1>Candidates</h1>
+    <div class="col-6 d-flex flex-column">
+      <h1 class="d-flex justify-content-center">Candidates</h1>
       <app-candidates/>
     </div>
   </div>

@@ -13,7 +13,9 @@ import { Validation } from '../../../core/constants/validation';
 import { VotersService } from '../../services/voters.service';
 import { ValidationMessagesDirective } from '../../../core/directives/validation-messages.directive';
 import { SubmitButtonComponent } from '../../../shared/components/submit-button/submit-button.component';
-import { IApiResult } from '../../../core/models/api-result';
+import { ElectionsService } from '../../services/elections.service';
+import { RoomCodeUrlGrabberService } from '../../services/room-code-url-grabber.service';
+import { map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-create-voter',
@@ -39,6 +41,8 @@ export class CreateVoterComponent
 
   private formBuilder = inject(FormBuilder);
   private voterService = inject(VotersService);
+  private electionService = inject(ElectionsService);
+  private roomCodeUrlGrabber = inject(RoomCodeUrlGrabberService);
 
   constructor() {
     super();
@@ -47,23 +51,26 @@ export class CreateVoterComponent
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.initReactiveBindings();
 
-    this.onSubmit((createVoter) => {
-      this.voterService.create(createVoter);
-    });
-
-    this.onSubmitSuccess((result: IApiResult) => {
-      this.toastr.success(result.message);
-    });
-
-    this.onSubmitError();
+    this.onSubmit()
+      .pipe(
+        map((createVoter) => {
+          return this.addElectionIdToVoterFromLocalStorage(createVoter);
+        }),
+        switchMap((createVoter) => this.voterService.create(createVoter)),
+      )
+      .subscribe((result) => {
+        this.toastr.success(result.message);
+      });
   }
 
-  override initReactiveBindings(): void {
-    this.bind(this.voterService.createVoterSuccess$, this.submitSuccess$);
-
-    this.bind(this.voterService.createVoterError$, this.submitError$);
+  private addElectionIdToVoterFromLocalStorage(createVoter: ICreateVoter) {
+    const roomCode = this.roomCodeUrlGrabber.getRoomCode();
+    if (roomCode) {
+      const electionId = localStorage.getItem(roomCode)?.toString();
+      if (electionId) createVoter.electionId = Number(electionId);
+    }
+    return createVoter;
   }
 
   private createForm(): FormGroup {
