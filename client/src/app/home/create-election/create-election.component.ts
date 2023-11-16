@@ -15,6 +15,7 @@ import { ValidationMessagesDirective } from '../../core/directives/validation-me
 import { Validation } from '../../core/constants/validation';
 import { Router } from '@angular/router';
 import { switchMap } from 'rxjs';
+import { RouteNames } from '../../core/constants/route-names';
 
 @Component({
   selector: 'app-create-election',
@@ -63,7 +64,9 @@ export class CreateElectionComponent
           result.apiResult.id.toString(),
         );
 
-        this.router.navigateByUrl(`/election/${result.election.roomCode}`);
+        this.router.navigateByUrl(
+          `/${RouteNames.ElectionRoom}/${result.election.roomCode}`,
+        );
       });
   }
 

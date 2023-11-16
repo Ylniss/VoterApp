@@ -22,10 +22,10 @@ import { UUID } from 'crypto';
     VotersComponent,
     CandidatesComponent,
   ],
-  templateUrl: './election.component.html',
-  styleUrl: './election.component.scss',
+  templateUrl: './election-room.component.html',
+  styleUrl: './election-room.component.scss',
 })
-export class ElectionComponent implements OnInit {
+export class ElectionRoomComponent implements OnInit {
   public electionService = inject(ElectionsService);
   public roomCode!: UUID;
   private roomCodeUrlGrabber = inject(RoomCodeUrlGrabberService);
