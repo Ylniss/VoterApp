@@ -62,6 +62,36 @@ public class ElectionApiTests :
     }
 
     [Fact]
+    public async Task IsRoomCodeAndElectionIdPairValid_PairIsValid_ShouldReturnStatusCode200WithTrue()
+    {
+        // Arrange
+        var request = $"{ApiElections}/roomcode/c7f8b63d-4ca7-41f8-bd28-54ff5d41dc13/1";
+
+        // Act
+        var response = await _client.GetAsync(request);
+        var isValid = await response.Content.ReadAsAsync<bool>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        isValid.ShouldBe(true);
+    }
+
+    [Fact]
+    public async Task IsRoomCodeAndElectionIdPairValid_PairIsInvalid_ShouldReturnStatusCode200WithFalse()
+    {
+        // Arrange
+        var request = $"{ApiElections}/roomcode/c7f8b63d-4ca7-41f8-bd28-54ff5d41dc13/2";
+
+        // Act
+        var response = await _client.GetAsync(request);
+        var isValid = await response.Content.ReadAsAsync<bool>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        isValid.ShouldBe(false);
+    }
+
+    [Fact]
     public async Task GetByRoomCode_RoomCodeThatDoesntExist_ShouldReturnStatusCode404()
     {
         // Arrange

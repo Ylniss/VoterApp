@@ -43,6 +43,16 @@ export class ElectionsService {
     );
   }
 
+  public isRoomCodeAndElectionIdPairValid(
+    roomCode: UUID,
+    electionId: number,
+  ): Observable<boolean> {
+    return this.electionsHttpService.isRoomCodeAndElectionIdPairValid(
+      roomCode,
+      electionId,
+    );
+  }
+
   public loadByElectionId(electionId: number): Observable<IElection> {
     return this.electionsHttpService
       .get(electionId)

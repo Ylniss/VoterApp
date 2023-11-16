@@ -14,8 +14,7 @@ import { VotersService } from '../../services/voters.service';
 import { ValidationMessagesDirective } from '../../../core/directives/validation-messages.directive';
 import { SubmitButtonComponent } from '../../../shared/components/submit-button/submit-button.component';
 import { ElectionsService } from '../../services/elections.service';
-import { RoomCodeUrlGrabberService } from '../../services/room-code-url-grabber.service';
-import { map, switchMap } from 'rxjs';
+import { map, mergeMap, switchMap, tap } from 'rxjs';
 import { UUID } from 'crypto';
 
 @Component({
@@ -45,7 +44,6 @@ export class CreateVoterComponent
   private formBuilder = inject(FormBuilder);
   private voterService = inject(VotersService);
   private electionService = inject(ElectionsService);
-  private roomCodeUrlGrabber = inject(RoomCodeUrlGrabberService);
 
   constructor() {
     super();
@@ -55,17 +53,23 @@ export class CreateVoterComponent
   override ngOnInit(): void {
     super.ngOnInit();
 
-    console.log(`oninit - CreateVoterComponent room code: ${this.roomCode}`);
-
     this.onSubmit()
       .pipe(
         map((createVoter) => {
           return this.addElectionIdToVoterFromLocalStorage(createVoter);
         }),
-        switchMap((createVoter) => this.voterService.create(createVoter)),
+        mergeMap((createVoter) =>
+          this.voterService.create(createVoter).pipe(
+            tap((result) => this.toastr.success(result.message)),
+            map(() => createVoter),
+          ),
+        ),
+        switchMap((result) =>
+          this.electionService.loadByElectionId(result.electionId),
+        ),
       )
-      .subscribe((result) => {
-        this.toastr.success(result.message);
+      .subscribe((election) => {
+        console.log(election.voters);
       });
   }
 

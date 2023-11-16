@@ -7,8 +7,8 @@ import { RouteNames } from './core/constants/route-names';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'server-error', component: ServerErrorComponent },
-  { path: 'not-found', component: NotFoundComponent },
+  { path: RouteNames.ServerError, component: ServerErrorComponent },
+  { path: RouteNames.NotFound, component: NotFoundComponent },
 
   {
     path: `${RouteNames.ElectionRoom}/:roomCode`,

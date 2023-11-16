@@ -31,6 +31,15 @@ export class ElectionsHttpService {
     );
   }
 
+  public isRoomCodeAndElectionIdPairValid(
+    roomCode: UUID,
+    electionId: number,
+  ): Observable<boolean> {
+    return this.httpClient.get<boolean>(
+      `${this.baseUrl}/${ApiPaths.ElectionsRoomCode}/${roomCode}/${electionId}`,
+    );
+  }
+
   public create(createElection: ICreateElection): Observable<IApiResult> {
     return this.httpClient.post<IApiResult>(
       `${this.baseUrl}/${ApiPaths.Elections}`,

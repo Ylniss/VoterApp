@@ -4,11 +4,14 @@ import { CreateElectionComponent } from '../home/create-election/create-election
 import { JoinElectionComponent } from '../home/join-election/join-election.component';
 import { LogoComponent } from '../shared/components/logo/logo.component';
 import { VoteComponent } from './vote/vote.component';
-import { VotersComponent } from './voters/voters.component';
-import { CandidatesComponent } from './candidates/candidates.component';
+import { VotersCreatorComponent } from './voters-creator/voters-creator.component';
+import { CandidatesCreatorComponent } from './candidates-creator/candidates-creator.component';
 import { ElectionsService } from './services/elections.service';
 import { RoomCodeUrlGrabberService } from './services/room-code-url-grabber.service';
 import { UUID } from 'crypto';
+import { switchMap } from 'rxjs';
+import { ElectionRoomCreatorHeaderComponent } from './election-room-creator-header/election-room-creator-header.component';
+import { ElectionRoomPublicHeaderComponent } from './election-room-public-header/election-room-public-header.component';
 
 @Component({
   selector: 'app-election',
@@ -19,21 +22,41 @@ import { UUID } from 'crypto';
     JoinElectionComponent,
     LogoComponent,
     VoteComponent,
-    VotersComponent,
-    CandidatesComponent,
+    VotersCreatorComponent,
+    CandidatesCreatorComponent,
+    ElectionRoomCreatorHeaderComponent,
+    ElectionRoomPublicHeaderComponent,
   ],
   templateUrl: './election-room.component.html',
-  styleUrl: './election-room.component.scss',
 })
 export class ElectionRoomComponent implements OnInit {
   public electionService = inject(ElectionsService);
   public roomCode!: UUID;
   private roomCodeUrlGrabber = inject(RoomCodeUrlGrabberService);
+  private electionId?: number;
 
   ngOnInit(): void {
     this.loadElectionByRoomCodeFromUrl();
-    // todo check if admin -> send req to endpoint that validates roomcode-electionid pair from local storage
-    // if yes then send req to get endpoint for election$ (nonpubilc)
+    if (!this.roomCode) return; // ssr is not able to get roomcode from url, exit to prevent errors
+
+    this.electionId = Number(localStorage.getItem(this.roomCode));
+
+    if (this.electionId) {
+      this.electionService
+        .isRoomCodeAndElectionIdPairValid(this.roomCode, this.electionId)
+        .pipe(
+          switchMap((isValid) => {
+            if (isValid)
+              // has 'admin' rights, load from non-public endpoint
+              return this.electionService.loadByElectionId(this.electionId!);
+            else return this.electionService.loadByRoomCode(this.roomCode); // load from public endpoint
+          }),
+        )
+        .subscribe();
+    } else {
+      console.log('loading electionPublic by room code');
+      this.electionService.loadByRoomCode(this.roomCode).subscribe();
+    }
   }
 
   private loadElectionByRoomCodeFromUrl(): void {
@@ -42,8 +65,6 @@ export class ElectionRoomComponent implements OnInit {
     if (maybeRoomCode) {
       this.roomCode = maybeRoomCode;
       console.log(`oninit - ElectionComponent, roomcode: ${this.roomCode}`);
-      console.log('loading electionPublic by room code');
-      this.electionService.loadByRoomCode(this.roomCode).subscribe();
     }
   }
 }

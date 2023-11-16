@@ -3,36 +3,26 @@
 </div>
 
 <div class="container">
-  <ng-container *ngIf="electionService.election$ | async as election">
-    <div class="mb-5 d-flex flex-row justify-content-between">
-      <p class="row">
-        Create voters and candidates. Share your election room code
-      </p>
-      <p class="row">
-        --->
-      </p>
-      <p class="row">
-        {{election.roomCode}}
-      </p>
+  <ng-container *ngIf="electionService.election$ | async as election; else publicAccess">
+    <app-election-room-creator-header [election]="election"/>
+    <div class="row d-flex justify-content-between">
+      <div class="col-6 d-flex flex-column">
+        <h1 class="d-flex justify-content-center">Voters</h1>
+        <app-voters-creator [roomCode]="roomCode"/>
+      </div>
+      <div class="col-6 d-flex flex-column">
+        <h1 class="d-flex justify-content-center">Candidates</h1>
+        <app-candidates-creator/>
+      </div>
     </div>
   </ng-container>
+  <ng-template #publicAccess>
+    <ng-container *ngIf="electionService.electionPublic$ | async as election">
+      <app-election-room-public-header [election]="election"/>
+    </ng-container>
+  </ng-template>
 
-  <ng-container *ngIf="electionService.electionPublic$ | async as election">
-    <h3 class="d-flex justify-content-center">
-      {{election.topic}}
-    </h3>
-  </ng-container>
 
-  <div class="row d-flex justify-content-between">
-    <div class="col-6 d-flex flex-column">
-      <h1 class="d-flex justify-content-center">Voters</h1>
-      <app-voters [roomCode]="roomCode"/>
-    </div>
-    <div class="col-6 d-flex flex-column">
-      <h1 class="d-flex justify-content-center">Candidates</h1>
-      <app-candidates/>
-    </div>
-  </div>
   <hr>
   <app-vote/>
 </div>

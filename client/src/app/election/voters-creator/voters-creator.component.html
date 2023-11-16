@@ -1,0 +1,5 @@
+<div *ngFor="let voter of (electionService.election$ | async)?.voters">
+  <app-read-or-update-voter [voter]="voter"/>
+</div>
+
+<app-create-voter [roomCode]="roomCode"/>

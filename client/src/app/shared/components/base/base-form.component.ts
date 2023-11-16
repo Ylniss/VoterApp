@@ -53,6 +53,7 @@ export class BaseFormComponent<T> implements OnInit {
 
   public submit(): void {
     this.submit$.next(this.form.value);
+    this.form.reset();
   }
 
   protected onSubmit(): Observable<T> {
