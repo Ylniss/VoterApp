@@ -43,6 +43,12 @@ export class ElectionsService {
     );
   }
 
+  public loadByElectionId(electionId: number): Observable<IElection> {
+    return this.electionsHttpService
+      .get(electionId)
+      .pipe(tap((election) => this._election$.next(election)));
+  }
+
   public loadByRoomCode(roomCode: UUID): Observable<IElectionPublic> {
     return this.electionsHttpService
       .getByRoomCode(roomCode)

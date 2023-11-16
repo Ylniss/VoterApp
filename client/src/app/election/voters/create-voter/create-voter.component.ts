@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseFormComponent } from '../../../shared/components/base/base-form.component';
 import { ICreateVoter } from '../../../shared/models/voter';
@@ -16,6 +16,7 @@ import { SubmitButtonComponent } from '../../../shared/components/submit-button/
 import { ElectionsService } from '../../services/elections.service';
 import { RoomCodeUrlGrabberService } from '../../services/room-code-url-grabber.service';
 import { map, switchMap } from 'rxjs';
+import { UUID } from 'crypto';
 
 @Component({
   selector: 'app-create-voter',
@@ -33,6 +34,8 @@ export class CreateVoterComponent
   extends BaseFormComponent<ICreateVoter>
   implements OnInit
 {
+  @Input() roomCode!: UUID;
+
   public name = new FormControl('', [
     Validators.required,
     Validators.minLength(Validation.MinNameLength),
@@ -52,6 +55,8 @@ export class CreateVoterComponent
   override ngOnInit(): void {
     super.ngOnInit();
 
+    console.log(`oninit - CreateVoterComponent room code: ${this.roomCode}`);
+
     this.onSubmit()
       .pipe(
         map((createVoter) => {
@@ -65,9 +70,8 @@ export class CreateVoterComponent
   }
 
   private addElectionIdToVoterFromLocalStorage(createVoter: ICreateVoter) {
-    const roomCode = this.roomCodeUrlGrabber.getRoomCode();
-    if (roomCode) {
-      const electionId = localStorage.getItem(roomCode)?.toString();
+    if (this.roomCode) {
+      const electionId = localStorage.getItem(this.roomCode)?.toString();
       if (electionId) createVoter.electionId = Number(electionId);
     }
     return createVoter;

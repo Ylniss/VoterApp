@@ -1,5 +1,5 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { catchError, throwError } from 'rxjs';
+import { catchError, EMPTY, throwError } from 'rxjs';
 import { NavigationExtras, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { inject } from '@angular/core';
@@ -13,15 +13,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (error) {
         if (error.status === 400) {
           if (error.error.errors) {
-            toastr.error(
-              error.error.errors.join('<br>'),
-              `${error.error.message} ${error.error.statusCode}`,
-              {
-                enableHtml: true,
-              },
-            );
+            toastr.error(error.error.errors.join('<br>'), 'Validation error', {
+              enableHtml: true,
+            });
+            return EMPTY;
           } else {
-            throw error.error;
+            throwError(() => error);
           }
         }
         if (error.status === 401) {

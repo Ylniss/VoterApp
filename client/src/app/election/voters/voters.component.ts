@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CreateVoterComponent } from './create-voter/create-voter.component';
-import { VotersService } from '../services/voters.service';
+import { UUID } from 'crypto';
 
 @Component({
   selector: 'app-voters',
@@ -9,6 +9,10 @@ import { VotersService } from '../services/voters.service';
   imports: [CommonModule, CreateVoterComponent],
   templateUrl: './voters.component.html',
 })
-export class VotersComponent {
-  votersService = inject(VotersService);
+export class VotersComponent implements OnInit {
+  @Input() roomCode!: UUID;
+
+  ngOnInit(): void {
+    console.log(`oninit - VotersComponent room code: ${this.roomCode}`);
+  }
 }

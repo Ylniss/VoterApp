@@ -16,7 +16,12 @@ export class RoomCodeUrlGrabberService {
       const url = window.location.href;
       const segments = url.split('/');
       const roomCode = segments.pop() || '';
-      return this.uuidValidator.isValid(roomCode) ? (roomCode as UUID) : null;
-    } else return null;
+      if (this.uuidValidator.isValid(roomCode)) {
+        return roomCode as UUID;
+      } else {
+        throw new Error("Couldn't obtain room code. Invalid url.");
+      }
+    }
+    return null;
   }
 }

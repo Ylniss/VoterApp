@@ -27,9 +27,8 @@ import { UUID } from 'crypto';
 })
 export class ElectionComponent implements OnInit {
   public electionService = inject(ElectionsService);
+  public roomCode!: UUID;
   private roomCodeUrlGrabber = inject(RoomCodeUrlGrabberService);
-
-  private roomCode: UUID | null = null;
 
   ngOnInit(): void {
     this.loadElectionByRoomCodeFromUrl();
@@ -38,8 +37,13 @@ export class ElectionComponent implements OnInit {
   }
 
   private loadElectionByRoomCodeFromUrl(): void {
-    this.roomCode = this.roomCodeUrlGrabber.getRoomCode();
-    if (this.roomCode)
+    const maybeRoomCode = this.roomCodeUrlGrabber.getRoomCode();
+
+    if (maybeRoomCode) {
+      this.roomCode = maybeRoomCode;
+      console.log(`oninit - ElectionComponent, roomcode: ${this.roomCode}`);
+      console.log('loading electionPublic by room code');
       this.electionService.loadByRoomCode(this.roomCode).subscribe();
+    }
   }
 }
