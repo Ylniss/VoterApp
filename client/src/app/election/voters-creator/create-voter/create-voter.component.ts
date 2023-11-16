@@ -14,7 +14,7 @@ import { VotersService } from '../../services/voters.service';
 import { ValidationMessagesDirective } from '../../../core/directives/validation-messages.directive';
 import { SubmitButtonComponent } from '../../../shared/components/submit-button/submit-button.component';
 import { ElectionsService } from '../../services/elections.service';
-import { map, mergeMap, switchMap, tap } from 'rxjs';
+import { map, mergeMap, switchMap } from 'rxjs';
 import { UUID } from 'crypto';
 
 @Component({
@@ -27,7 +27,6 @@ import { UUID } from 'crypto';
     SubmitButtonComponent,
   ],
   templateUrl: './create-voter.component.html',
-  styleUrl: './create-voter.component.scss',
 })
 export class CreateVoterComponent
   extends BaseFormComponent<ICreateVoter>
@@ -59,18 +58,13 @@ export class CreateVoterComponent
           return this.addElectionIdToVoterFromLocalStorage(createVoter);
         }),
         mergeMap((createVoter) =>
-          this.voterService.create(createVoter).pipe(
-            tap((result) => this.toastr.success(result.message)),
-            map(() => createVoter),
-          ),
+          this.voterService.create(createVoter).pipe(map(() => createVoter)),
         ),
         switchMap((result) =>
           this.electionService.loadByElectionId(result.electionId),
         ),
       )
-      .subscribe((election) => {
-        console.log(election.voters);
-      });
+      .subscribe();
   }
 
   private addElectionIdToVoterFromLocalStorage(createVoter: ICreateVoter) {

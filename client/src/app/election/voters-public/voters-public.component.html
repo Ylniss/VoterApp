@@ -1,0 +1,7 @@
+<div *ngIf="(electionService.electionPublic$| async)?.voters?.length != 0" class="d-flex flex-row mb-2">
+  <div class="col"><strong>Name</strong></div>
+  <div class="col d-flex justify-content-center"><strong>Vote</strong></div>
+</div>
+<div *ngFor="let voter of (electionService.electionPublic$ | async)?.voters">
+  <app-read-voter-public [voter]="voter"/>
+</div>

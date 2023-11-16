@@ -54,9 +54,14 @@ export class ElectionsService {
   }
 
   public loadByElectionId(electionId: number): Observable<IElection> {
-    return this.electionsHttpService
-      .get(electionId)
-      .pipe(tap((election) => this._election$.next(election)));
+    return this.electionsHttpService.get(electionId).pipe(
+      map((election) => {
+        election.voters.sort((a, b) => a.id - b.id);
+        election.candidates.sort((a, b) => a.id - b.id);
+        return election;
+      }),
+      tap((election) => this._election$.next(election)),
+    );
   }
 
   public loadByRoomCode(roomCode: UUID): Observable<IElectionPublic> {

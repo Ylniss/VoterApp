@@ -4,18 +4,18 @@ import { UUID } from 'crypto';
 import { ElectionsService } from '../services/elections.service';
 
 @Component({
-  selector: 'app-candidates-creator',
+  selector: 'app-candidates-public',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './candidates-creator.component.html',
+  templateUrl: './candidates-public.component.html',
 })
-export class CandidatesCreatorComponent {
+export class CandidatesPublicComponent {
   @Input() roomCode!: UUID;
 
   public electionService = inject(ElectionsService);
 
   ngOnInit(): void {
     if (!this.roomCode)
-      throw new Error('CandidatesCreatorComponent roomCode not initialized');
+      throw new Error('CandidatesPublicComponent roomCode not initialized');
   }
 }

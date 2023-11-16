@@ -12,6 +12,8 @@ import { UUID } from 'crypto';
 import { switchMap } from 'rxjs';
 import { ElectionRoomCreatorHeaderComponent } from './election-room-creator-header/election-room-creator-header.component';
 import { ElectionRoomPublicHeaderComponent } from './election-room-public-header/election-room-public-header.component';
+import { VotersPublicComponent } from './voters-public/voters-public.component';
+import { CandidatesPublicComponent } from './candidates-public/candidates-public.component';
 
 @Component({
   selector: 'app-election',
@@ -26,6 +28,8 @@ import { ElectionRoomPublicHeaderComponent } from './election-room-public-header
     CandidatesCreatorComponent,
     ElectionRoomCreatorHeaderComponent,
     ElectionRoomPublicHeaderComponent,
+    VotersPublicComponent,
+    CandidatesPublicComponent,
   ],
   templateUrl: './election-room.component.html',
 })
@@ -54,7 +58,6 @@ export class ElectionRoomComponent implements OnInit {
         )
         .subscribe();
     } else {
-      console.log('loading electionPublic by room code');
       this.electionService.loadByRoomCode(this.roomCode).subscribe();
     }
   }
@@ -64,7 +67,6 @@ export class ElectionRoomComponent implements OnInit {
 
     if (maybeRoomCode) {
       this.roomCode = maybeRoomCode;
-      console.log(`oninit - ElectionComponent, roomcode: ${this.roomCode}`);
     }
   }
 }

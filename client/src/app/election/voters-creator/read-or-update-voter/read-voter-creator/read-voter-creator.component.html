@@ -1,0 +1,18 @@
+<div class="d-flex flex-row mb-2">
+  <div class="col-3">{{voter.name}}</div>
+  <div class="col-1 d-flex justify-content-center">
+    <ng-container *ngIf="voter.hasVoted; else votedIcon">
+      <i class="bi bi-check"></i>
+    </ng-container>
+    <ng-template #votedIcon>
+      <i class="bi bi-x"></i>
+    </ng-template>
+  </div>
+  <div class="col-5 d-flex justify-content-center">{{voter.keyPhrase}}</div>
+  <div class="col-1">
+    <button (click)="openRollHistoryEdit()" class="icon-button"><i class="bi bi-pencil-square"></i></button>
+  </div>
+  <div class="col-1">
+    <button (click)="deleteVoter()" class="icon-button"><i class="bi bi-trash-fill"></i></button>
+  </div>
+</div>

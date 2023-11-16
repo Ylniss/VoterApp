@@ -12,17 +12,25 @@
       </div>
       <div class="col-6 d-flex flex-column">
         <h1 class="d-flex justify-content-center">Candidates</h1>
-        <app-candidates-creator/>
+        <app-candidates-creator [roomCode]="roomCode"/>
       </div>
     </div>
   </ng-container>
   <ng-template #publicAccess>
     <ng-container *ngIf="electionService.electionPublic$ | async as election">
       <app-election-room-public-header [election]="election"/>
+      <div class="row d-flex justify-content-between">
+        <div class="col-6 d-flex flex-column">
+          <h1 class="d-flex justify-content-center">Voters</h1>
+          <app-voters-public [roomCode]="roomCode"/>
+        </div>
+        <div class="col-6 d-flex flex-column">
+          <h1 class="d-flex justify-content-center">Candidates</h1>
+          <app-candidates-public [roomCode]="roomCode"/>
+        </div>
+      </div>
     </ng-container>
   </ng-template>
-
-
   <hr>
   <app-vote/>
 </div>

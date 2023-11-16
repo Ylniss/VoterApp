@@ -1,5 +1,5 @@
 <form (ngSubmit)="submit()" [formGroup]="form">
-  <div class="row justify-content-between mt-2">
+  <div class="row justify-content-between mb-1">
     <div class="col-9">
       <input
         [appValidationMessages]="[
@@ -8,11 +8,11 @@
             {errorCode: 'maxlength', message: Messages.NameIsTooLong}
           ]"
         [formControl]="name"
-        [placeholder]="'Enter voter name'"
+        [placeholder]="'Enter new voter name'"
         class="form-control me-4"
       /></div>
     <div class="col-3">
-      <app-submit-button [disabled]="!form.valid" [text]="'Add'"></app-submit-button>
+      <app-submit-button [disabled]="!form.valid" [text]="'Update'"></app-submit-button>
     </div>
   </div>
 </form>

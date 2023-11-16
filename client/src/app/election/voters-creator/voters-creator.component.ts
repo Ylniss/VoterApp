@@ -18,6 +18,6 @@ export class VotersCreatorComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.roomCode)
-      throw new Error('VotersComponent roomCode not initialized');
+      throw new Error('VotersCreatorComponent roomCode not initialized');
   }
 }
