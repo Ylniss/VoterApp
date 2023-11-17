@@ -27,7 +27,7 @@ public class UpdateVoterCommandHandler : IRequestHandler<UpdateVoterCommand, Com
         if (voter is null)
             throw new NotFoundException(request.Id);
 
-        request = request with { VotedCandidateId = voter.VotedCandidate.Id };
+        request = request with { VotedCandidateId = voter.VotedCandidate?.Id };
 
         await _voterRepository.Update(request);
 

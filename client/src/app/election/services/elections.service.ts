@@ -65,10 +65,13 @@ export class ElectionsService {
   }
 
   public loadByRoomCode(roomCode: UUID): Observable<IElectionPublic> {
-    return this.electionsHttpService
-      .getByRoomCode(roomCode)
-      .pipe(
-        tap((electionPublic) => this._electionPublic$.next(electionPublic)),
-      );
+    return this.electionsHttpService.getByRoomCode(roomCode).pipe(
+      map((election) => {
+        election.voters.sort((a, b) => a.id - b.id);
+        election.candidates.sort((a, b) => a.id - b.id);
+        return election;
+      }),
+      tap((electionPublic) => this._electionPublic$.next(electionPublic)),
+    );
   }
 }

@@ -1,7 +1,22 @@
 <div class="d-flex flex-column align-items-center">
   <p class="text-center" style="height: 3.5rem;">Join to existing election and vote for your candidate.</p>
-  <form class="d-flex w-75">
-    <input class="form-control me-4" placeholder="Enter room code" type="text">
-    <button class="btn btn-outline-primary">Join</button>
+  <form (ngSubmit)="submit()" [formGroup]="form">
+    <div class="row justify-content-between mb-1">
+      <div class="col-9">
+        <input
+          [appValidationMessages]="[
+            {errorCode: 'required', message: Messages.RoomCodeIsRequired},
+          ]"
+          [formControl]="roomCode"
+          [placeholder]="'Enter room code'"
+          class="form-control me-4"
+        /></div>
+      <div class="col-3">
+        <app-submit-button [disabled]="!form.valid" [text]="'Join'"></app-submit-button>
+      </div>
+    </div>
   </form>
 </div>
+
+
+
