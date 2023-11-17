@@ -37,7 +37,6 @@ import { UUID } from 'crypto';
     NgbDropdownMenu,
   ],
   templateUrl: './vote.component.html',
-  styleUrl: './vote.component.scss',
 })
 export class VoteComponent extends BaseFormComponent<IVote> {
   @Input() roomCode!: UUID;
@@ -72,15 +71,14 @@ export class VoteComponent extends BaseFormComponent<IVote> {
 
     this.onSubmit()
       .pipe(
-        switchMap((vote) => this.voterService.vote(vote)),
-        switchMap((result) =>
-          this.electionService.loadByRoomCode(this.roomCode),
-        ),
+        switchMap((vote) => {
+          this.selectedVoterName = this.voterDropdownDefaultText;
+          this.selectedCandidateName = this.candidateDropdownDefaultText;
+          return this.voterService.vote(vote);
+        }),
+        switchMap(() => this.electionService.loadByRoomCode(this.roomCode)),
       )
-      .subscribe(() => {
-        this.selectedVoterName = this.voterDropdownDefaultText;
-        this.selectedCandidateName = this.candidateDropdownDefaultText;
-      });
+      .subscribe();
   }
 
   public selectVoter(voterName: string) {

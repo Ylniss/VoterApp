@@ -35,7 +35,7 @@ export class JoinElectionComponent
   private formBuilder = inject(FormBuilder);
   private router = inject(Router);
   private electionService = inject(ElectionsService);
-  private uuidValdator = inject(UuidValidatorUtils);
+  private uuidValidator = inject(UuidValidatorUtils);
 
   constructor() {
     super();
@@ -47,7 +47,7 @@ export class JoinElectionComponent
 
     this.onSubmit().subscribe((roomCode) => {
       const roomCodeTrimmed = roomCode.roomCode.trim();
-      const isValid = this.uuidValdator.isValid(roomCodeTrimmed);
+      const isValid = this.uuidValidator.isValid(roomCodeTrimmed);
       if (isValid)
         this.router.navigateByUrl(
           `/${RouteNames.ElectionRoom}/${roomCodeTrimmed}`,

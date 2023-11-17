@@ -18,7 +18,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             });
             return EMPTY;
           } else {
-            throwError(() => error);
+            return throwError(() => error);
           }
         }
         if (error.status === 401) {
